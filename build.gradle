@@ -1,0 +1,35 @@
+group 'ru.maklas.engine'
+version '1.0-SNAPSHOT'
+
+apply plugin: 'eclipse'
+apply plugin: 'idea'
+apply plugin: 'java'
+
+sourceCompatibility = 1.6
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+    maven { url "https://oss.sonatype.org/content/repositories/releases/" }
+    maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
+}
+
+ext {
+    projectGroup = "maklas"
+    gdxVersion = "1.9.4"
+    jUnitVersion = "4.12"
+}
+
+/** needed to disable Java 8 doclint which throws errors **/
+if (JavaVersion.current().isJava8Compatible()) {
+    allprojects {
+        tasks.withType(Javadoc) {
+            options.addStringOption('Xdoclint:none', '-quiet')
+        }
+    }
+}
+
+dependencies {
+    compile "com.badlogicgames.gdx:gdx:$gdxVersion"
+    testCompile "junit:junit:$jUnitVersion"
+}
