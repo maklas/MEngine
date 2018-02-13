@@ -31,5 +31,6 @@ if (JavaVersion.current().isJava8Compatible()) {
 
 dependencies {
     compile "com.badlogicgames.gdx:gdx:$gdxVersion"
+    compile "org.jetbrains:annotations-java5:15.0"
     testCompile "junit:junit:$jUnitVersion"
 }

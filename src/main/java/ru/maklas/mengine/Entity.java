@@ -1,5 +1,6 @@
 package ru.maklas.mengine;
 
+import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Pool;
 import ru.maklas.mengine.utils.Signal;
 
@@ -21,6 +22,7 @@ public class Entity {
 
     public final Signal<EntityComponentEvent> componentSignal = new Signal<EntityComponentEvent>();
     private Component[] components;
+    Array<Component> componentArray = new Array<Component>(5);
 
     private Engine engine;
     boolean scheduledForRemoval = false;
@@ -30,11 +32,11 @@ public class Entity {
         this.x = x;
         this.y = y;
         this.zOrder = zOrder;
-        components = new Component[ComponentMapper.counter];
+        components = new Component[Engine.TOTAL_COMPONENTS];
     }
 
     public Entity() {
-        components = new Component[ComponentMapper.counter];
+        components = new Component[Engine.TOTAL_COMPONENTS];
     }
 
     public Entity(int id) {
@@ -44,34 +46,29 @@ public class Entity {
 
     public Entity add(Component component){
         ComponentMapper mapper = ComponentMapper.of(component.getClass());
-        if (mapper.id >= components.length){
-            expandComponentsArray(mapper.id);
+        Component oldComponent = components[mapper.id];
+        if (oldComponent != null){
+            componentArray.removeValue(oldComponent, true);
         }
         components[mapper.id] = component;
-
-        componentSignal.dispatch(eventPool.obtain().setUp(this, component, true));
+        componentArray.add(component);
+        componentSignal.dispatch(eventPool.obtain().setUp(this, component, mapper, true));
         return this;
     }
 
-    private void expandComponentsArray(int id) {
-        components = Arrays.copyOf(components, id + 1);
+    public Component remove(Component component){
+        return remove(component.getClass());
     }
 
-    public Component remove(Component component){
-        ComponentMapper mapper = ComponentMapper.of(component.getClass());
-        Component[] components = this.components;
-        if (mapper.id >= components.length){
-            return null;
+    public Component remove(Class<? extends Component> clazz){
+        ComponentMapper mapper = ComponentMapper.of(clazz);
+        Component component = components[mapper.id];
+        components[mapper.id] = null;
+        if (component != null) {
+            componentSignal.dispatch(eventPool.obtain().setUp(this, component, mapper, false));
+            componentArray.removeValue(component, true);
         }
-
-        Component oldC = components[mapper.id];
-        if (oldC == component){
-            return null;
-        }
-
-        components[mapper.id] = component;
-        componentSignal.dispatch(eventPool.obtain().setUp(this, component, false));
-        return oldC;
+        return component;
     }
 
     @SuppressWarnings("all")
