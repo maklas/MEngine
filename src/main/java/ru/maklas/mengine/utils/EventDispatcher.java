@@ -17,6 +17,14 @@ public class EventDispatcher {
     }
 
     @SuppressWarnings("all")
+    public <T> void unsubscrive(Listener<T> listener, Class<T> type){
+        Signal<T> signal = map.get(type);
+        if (signal != null){
+            signal.remove(listener);
+        }
+    }
+
+    @SuppressWarnings("all")
     public void dispatch(Object event){
         Signal signal = map.get(event.getClass());
         if (signal != null){
