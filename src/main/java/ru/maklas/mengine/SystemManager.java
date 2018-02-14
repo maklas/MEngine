@@ -25,6 +25,7 @@ class SystemManager {
         EntitySystem oldSytem = getSystem(systemType);
         if (system instanceof RenderEntitySystem){
             renderSystem = (RenderEntitySystem) system;
+            return true;
         }
         if (system instanceof CollisionEntitySystem){
             collisionSystem = (CollisionEntitySystem) system;
@@ -49,6 +50,9 @@ class SystemManager {
 
     @SuppressWarnings("unchecked")
     public <T extends EntitySystem> T getSystem(Class<T> systemType) {
+        if (renderSystem != null && systemType == renderSystem.getClass()){
+            return (T) renderSystem;
+        }
         return (T) systemsByClass.get(systemType);
     }
 
