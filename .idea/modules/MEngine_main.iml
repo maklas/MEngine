@@ -9,7 +9,7 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" name="Gradle: com.badlogicgames.gdx:gdx:1.9.4" level="project" />
+    <orderEntry type="library" name="Gradle: com.badlogicgames.gdx:gdx:1.9.9-SNAPSHOT" level="project" />
     <orderEntry type="library" name="Gradle: org.jetbrains:annotations-java5:15.0" level="project" />
   </component>
 </module>
