@@ -23,6 +23,7 @@ public class Engine {
     private final EventDispatcher dispatcher;
     private final Listener<EntityComponentEvent> componentListener;
     private boolean updating;
+    private Array<EntityListener> listeners = new Array<EntityListener>();
 
     public Engine() {
         entities = new Array<Entity>(50);
@@ -58,6 +59,10 @@ public class Engine {
         this.entities.add(entity);
         entity.componentSignal.add(componentListener);
         entity.addToEngine(this);
+        for (EntityListener listener : listeners) {
+            listener.entityAdded(entity);
+        }
+
         return this;
     }
 
@@ -71,7 +76,12 @@ public class Engine {
         groupManager.entityRemoved(entity);
         entity.componentSignal.remove(componentListener);
         entity.removeFromEngine();
-        return entities.removeValue(entity, true);
+        entities.removeValue(entity, true);
+
+        for (EntityListener listener : listeners) {
+            listener.entityRemoved(entity);
+        }
+        return true;
     }
 
     public void removeAllEntities(){
@@ -159,6 +169,14 @@ public class Engine {
         while (pendingOperations.size > 0){
             pendingOperations.removeFirst().run();
         }
+    }
+
+    public void addListener(EntityListener listener){
+        listeners.add(listener);
+    }
+
+    public boolean removeListener(EntityListener listener){
+        return listeners.removeValue(listener, true);
     }
 
     public void render() {
