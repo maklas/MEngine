@@ -14,10 +14,10 @@ public class ComponentMapper<T extends Component> {
 
     private static ObjectMap<Class<? extends Component>, ComponentMapper> assignedComponentTypes = new ObjectMap<Class<? extends Component>, ComponentMapper>();
 
-    public static <C extends Component> ComponentMapper of(Class<C> cClass){
-        ComponentMapper componentMapper = assignedComponentTypes.get(cClass);
+    public static <C extends Component> ComponentMapper<C> of(Class<C> cClass){
+        ComponentMapper<C> componentMapper = assignedComponentTypes.get(cClass);
         if (componentMapper == null){
-            componentMapper = new ComponentMapper();
+            componentMapper = new ComponentMapper<C>();
             assignedComponentTypes.put(cClass, componentMapper);
         }
         return componentMapper;

@@ -2,6 +2,8 @@ package ru.maklas.mengine;
 
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Queue;
+import ru.maklas.mengine.systems.RenderEntitySystem;
+import ru.maklas.mengine.utils.EventDispatcher;
 import ru.maklas.mengine.utils.ImmutableArray;
 import ru.maklas.mengine.utils.Listener;
 import ru.maklas.mengine.utils.Signal;
@@ -9,19 +11,26 @@ import ru.maklas.mengine.utils.Signal;
 public class Engine {
 
     public static int TOTAL_COMPONENTS = 64;
+    public static final int COLLISION_SYSTEM_PRIORITY = 1000;
+    public static final int RENDER_SYSTEM_PRIORITY = 2000;
+    public static boolean UPDATE_ENTITIES_AFTER_ENGINE = true;
 
     private final Array<Entity> entities;
+    private final Array<UpdatableEntity> updatableEntities;
     private final ImmutableArray<Entity> immutableEntities;
     private final SystemManager systemManager;
     private final GroupManager groupManager;
+    private final EventDispatcher dispatcher;
     private final Listener<EntityComponentEvent> componentListener;
     private boolean updating;
 
-    Engine() {
+    public Engine() {
         entities = new Array<Entity>(50);
+        updatableEntities = new Array<UpdatableEntity>();
         immutableEntities = new ImmutableArray<Entity>(entities);
         systemManager = new SystemManager();
-        groupManager = new GroupManager();
+        groupManager = new GroupManager(this);
+        dispatcher = new EventDispatcher();
         componentListener = new Listener<EntityComponentEvent>() {
             @Override
             public void receive(Signal<EntityComponentEvent> signal, EntityComponentEvent event) {
@@ -34,23 +43,44 @@ public class Engine {
         };
     }
 
-    public void add(Entity entity){
+    public void execureAfterUpdate(Runnable runnable){
+        pendingOperations.addLast(runnable);
+    }
+
+    public Engine add(Entity entity){
         if (entity.getEngine() == this){
-            return;
+            return this;
+        }
+        if (entity instanceof UpdatableEntity){
+            updatableEntities.add((UpdatableEntity) entity);
         }
         groupManager.entityAdded(entity);
         this.entities.add(entity);
         entity.componentSignal.add(componentListener);
         entity.addToEngine(this);
+        return this;
     }
 
     public boolean remove(Entity entity){
         if (entity.getEngine() != this){
             return false;
         }
+        if (entity instanceof UpdatableEntity){
+            updatableEntities.removeValue((UpdatableEntity) entity, true);
+        }
         groupManager.entityRemoved(entity);
         entity.componentSignal.remove(componentListener);
+        entity.removeFromEngine();
         return entities.removeValue(entity, true);
+    }
+
+    public void removeAllEntities(){
+        for (Entity entity : entities) {
+            entity.componentSignal.remove(componentListener);
+        }
+
+        entities.clear();
+        groupManager.clearAll();
     }
 
     public void add(EntitySystem system){
@@ -86,9 +116,27 @@ public class Engine {
 
         Array<EntitySystem> systems = systemManager.getSystems();
 
-        for (EntitySystem system : systems) {
-            if (system.isEnabled()){
-                system.update(dt);
+        if (UPDATE_ENTITIES_AFTER_ENGINE) {
+            for (EntitySystem system : systems) {
+                if (system.isEnabled()) {
+                    system.update(dt);
+                }
+            }
+
+            for (UpdatableEntity updatableEntity : updatableEntities) {
+                updatableEntity.update(dt);
+            }
+
+        } else {
+
+            for (UpdatableEntity updatableEntity : updatableEntities) {
+                updatableEntity.update(dt);
+            }
+
+            for (EntitySystem system : systems) {
+                if (system.isEnabled()) {
+                    system.update(dt);
+                }
             }
         }
 
@@ -97,6 +145,13 @@ public class Engine {
         processPendingOperations();
     }
 
+    public <T> void subscribe(Listener<T> listener, Class<T> type) {
+        dispatcher.subscribe(listener, type);
+    }
+
+    public void dispatch(Object event){
+        dispatcher.dispatch(event);
+    }
 
     private Queue<Runnable> pendingOperations = new Queue<Runnable>();
     private void processPendingOperations() {
@@ -107,7 +162,14 @@ public class Engine {
     }
 
     public void render() {
+        RenderEntitySystem renderSystem = systemManager.getRenderSystem();
+        if (renderSystem != null){
+            renderSystem.render();
+        }
+    }
 
+    public ImmutableArray<Entity> entitiesFor(Class<? extends Component> componentClass) {
+        return groupManager.of(componentClass).immutables;
     }
 
 

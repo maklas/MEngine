@@ -1,6 +1,6 @@
 package ru.maklas.mengine;
 
-public enum EntityUpdateOrder {
+public enum UpdateEntityOrder {
 
     BEFORE_PHYSICS,
     AFTER_PHYSICS

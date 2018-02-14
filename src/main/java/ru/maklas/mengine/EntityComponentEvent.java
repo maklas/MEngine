@@ -4,7 +4,7 @@ public final class EntityComponentEvent {
 
     Entity entity;
     Component component;
-    ComponentMapper<? extends Component> mapper;
+    ComponentMapper mapper;
     boolean added;
 
 
@@ -25,7 +25,7 @@ public final class EntityComponentEvent {
     }
 
 
-    EntityComponentEvent setUp(Entity entity, Component component, ComponentMapper<? extends Component> mapper, boolean added) {
+    EntityComponentEvent setUp(Entity entity, Component component, ComponentMapper mapper, boolean added) {
         this.entity = entity;
         this.component = component;
         this.mapper = mapper;

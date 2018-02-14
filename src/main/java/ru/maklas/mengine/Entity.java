@@ -4,8 +4,6 @@ import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Pool;
 import ru.maklas.mengine.utils.Signal;
 
-import java.util.Arrays;
-
 public class Entity {
 
     private static final Pool<EntityComponentEvent> eventPool = new Pool<EntityComponentEvent>() {
@@ -15,17 +13,20 @@ public class Entity {
         }
     };
 
+    public static AngleNormalizator angleNormalizator = new AngleNormalizator360();
+
     public int id = -1;
     public float x;
     public float y;
+    public int type = -1;
+    float angle;
     public int zOrder;
 
     public final Signal<EntityComponentEvent> componentSignal = new Signal<EntityComponentEvent>();
-    private Component[] components;
+    private final Component[] components;
     Array<Component> componentArray = new Array<Component>(5);
 
     private Engine engine;
-    boolean scheduledForRemoval = false;
 
 
     public Entity(float x, float y, int zOrder) {
@@ -41,69 +42,119 @@ public class Entity {
 
     public Entity(int id) {
         this.id = id;
-        components = new Component[ComponentMapper.counter];
+        components = new Component[Engine.TOTAL_COMPONENTS];
     }
 
+
+    // COMPONENT MANIPULATION
+
     public Entity add(Component component){
-        ComponentMapper mapper = ComponentMapper.of(component.getClass());
+        Class aClass = component.getClass();
+        return add(component, ComponentMapper.of(aClass));
+    }
+
+    public <T extends Component> Entity add(T component, ComponentMapper<T> mapper){
         Component oldComponent = components[mapper.id];
         if (oldComponent != null){
             componentArray.removeValue(oldComponent, true);
+            EntityComponentEvent e = eventPool.obtain().setUp(this, oldComponent, mapper, false);
+            componentSignal.dispatch(e);
+            eventPool.free(e);
         }
         components[mapper.id] = component;
         componentArray.add(component);
-        componentSignal.dispatch(eventPool.obtain().setUp(this, component, mapper, true));
+        EntityComponentEvent e = eventPool.obtain().setUp(this, component, mapper, true);
+        componentSignal.dispatch(e);
+        eventPool.free(e);
         return this;
     }
 
-    public Component remove(Component component){
-        return remove(component.getClass());
+    public Component remove(Class<? extends Component> cClass){
+        return remove(ComponentMapper.of(cClass));
     }
 
-    public Component remove(Class<? extends Component> clazz){
-        ComponentMapper mapper = ComponentMapper.of(clazz);
+    public Component remove(ComponentMapper mapper){
         Component component = components[mapper.id];
         components[mapper.id] = null;
         if (component != null) {
-            componentSignal.dispatch(eventPool.obtain().setUp(this, component, mapper, false));
             componentArray.removeValue(component, true);
+            EntityComponentEvent e = eventPool.obtain().setUp(this, component, mapper, false);
+            componentSignal.dispatch(e);
+            eventPool.free(e);
         }
         return component;
     }
 
     @SuppressWarnings("all")
     public <T extends Component> T get(ComponentMapper<T> mapper){
-        if (mapper.id >= components.length){
-            return null;
-        }
         return (T) components[mapper.id];
+    }
+
+    @SuppressWarnings("all")
+    public <T extends Component> T get(Class<T> cClass){
+        return (T) components[ComponentMapper.of(cClass).id];
+    }
+
+
+
+    //GETTERS/SETTERS
+
+    public float getAngle() {
+        return angle;
+    }
+
+    public void setAngle(float angle) {
+        this.angle = angleNormalizator.normalize(angle);
+    }
+
+    //ENGINE events
+
+    final void addToEngine(Engine engine){
+        this.engine = engine;
+    }
+
+    final void removeFromEngine(){
+        Engine engine = this.engine;
+        this.engine = null;
+        removedFromEngine(engine);
     }
 
     public final boolean isInEngine(){
         return engine != null;
     }
 
-    void addToEngine(Engine engine){
-        this.engine = engine;
-    }
-
     protected void addedToEngine(Engine engine){}
 
-    public Engine getEngine() {
+    public final Engine getEngine() {
         return engine;
-    }
-
-    void removeFromEngine(){
-        removedFromEngine(engine);
-        this.engine = null;
     }
 
     protected void removedFromEngine(Engine engine){}
 
 
-    /** @return true if the entity is scheduled to be removed */
-    public boolean isScheduledForRemoval () {
-        return scheduledForRemoval;
+    //STRINGS
+
+    @Override
+    public String toString() {
+        return "Entity{" +
+                "id=" + id +
+                ", x=" + x +
+                ", y=" + y +
+                ", zOrder=" + zOrder +
+                '}';
     }
 
+    public String toStringWithComponents(){
+        return "Entity = {" +
+                "id=" + id +
+                ", x=" + x +
+                ", y=" + y +
+                ", zOrder=" + zOrder +
+                ", Components=" + componentArray.toString() +
+                '}';
+    }
+
+    public void rotate(float angle) {
+        this.angle = angleNormalizator.normalize(this.angle + angle);
+    }
 }

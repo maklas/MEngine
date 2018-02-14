@@ -14,10 +14,11 @@ public abstract class EntitySystem {
         this(0);
     }
 
-    public Engine getEngine() {
+    public final Engine getEngine() {
         return engine;
     }
 
+    public void onAddedToEngine(Engine engine){}
 
     public void update(float dt){}
 
@@ -26,13 +27,11 @@ public abstract class EntitySystem {
         onAddedToEngine(engine);
     }
 
-    public void onAddedToEngine(Engine engine){}
-
-    public boolean isEnabled() {
+    public final boolean isEnabled() {
         return enabled;
     }
 
-    public void setEnabled(boolean enabled) {
+    public final void setEnabled(boolean enabled) {
         this.enabled = enabled;
     }
 }
