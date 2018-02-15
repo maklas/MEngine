@@ -29,19 +29,23 @@ public class Entity {
     private Engine engine;
 
 
-    public Entity(float x, float y, int zOrder) {
-        this.x = x;
-        this.y = y;
-        this.zOrder = zOrder;
-        components = new Component[Engine.TOTAL_COMPONENTS];
-    }
-
     public Entity() {
-        components = new Component[Engine.TOTAL_COMPONENTS];
+        this(-1, 0, 0, 0);
     }
 
     public Entity(int id) {
+        this(id, 0, 0, 0);
+    }
+
+    public Entity(float x, float y, int zOrder) {
+        this(-1, x, y, zOrder);
+    }
+
+    public Entity(int id, float x, float y, int zOrder) {
         this.id = id;
+        this.x = x;
+        this.y = y;
+        this.zOrder = zOrder;
         components = new Component[Engine.TOTAL_COMPONENTS];
     }
 
