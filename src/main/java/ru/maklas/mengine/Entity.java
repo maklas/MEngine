@@ -111,6 +111,7 @@ public class Entity {
 
     final void addToEngine(Engine engine){
         this.engine = engine;
+        addedToEngine(engine);
     }
 
     final void removeFromEngine(){
