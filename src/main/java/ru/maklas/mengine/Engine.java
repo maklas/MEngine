@@ -107,7 +107,10 @@ public class Engine {
             pendingOperations.addLast(new RemoveSystemOperation(system));
             return;
         }
-        systemManager.removeSystem(system);
+        boolean b = systemManager.removeSystem(system);
+        if (b){
+            system.removeFromEngine();
+        }
     }
 
     public ImmutableArray<Entity> getEntities(){
@@ -155,8 +158,12 @@ public class Engine {
         processPendingOperations();
     }
 
-    public <T> void subscribe(Listener<T> listener, Class<T> type) {
+    public <T> void subscribe(Class<T> type, Listener<T> listener) {
         dispatcher.subscribe(listener, type);
+    }
+
+    public <T> void unsubscribe(Class<T> type, Listener<T> listener){
+        dispatcher.unsubscrive(listener, type);
     }
 
     public void dispatch(Object event){

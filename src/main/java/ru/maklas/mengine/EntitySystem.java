@@ -34,4 +34,6 @@ public abstract class EntitySystem {
     public final void setEnabled(boolean enabled) {
         this.enabled = enabled;
     }
+
+    public void removeFromEngine(){}
 }
