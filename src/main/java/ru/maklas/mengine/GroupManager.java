@@ -50,6 +50,7 @@ public class GroupManager {
         Group group = groups[mapper.id];
         if (group == null){
             group = new Group();
+            groups[mapper.id] = group;
 
             ImmutableArray<Entity> entities = engine.getEntities();
             int size = entities.size();
@@ -61,7 +62,6 @@ public class GroupManager {
             }
 
 
-            groups[mapper.id] = group;
         }
         return group;
     }
