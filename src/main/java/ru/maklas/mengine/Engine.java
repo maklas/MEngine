@@ -2,6 +2,7 @@ package ru.maklas.mengine;
 
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Queue;
+import org.jetbrains.annotations.Nullable;
 import ru.maklas.mengine.systems.RenderEntitySystem;
 import ru.maklas.mengine.utils.EventDispatcher;
 import ru.maklas.mengine.utils.ImmutableArray;
@@ -111,6 +112,18 @@ public class Engine {
         if (b){
             system.removeFromEngine();
         }
+    }
+
+    @Nullable
+    public Entity getById(int id){
+        Array.ArrayIterator<Entity> iterator = new Array.ArrayIterator<Entity>(entities);
+        while (iterator.hasNext()){
+            Entity next = iterator.next();
+            if (next.id == id){
+                return next;
+            }
+        }
+        return null;
     }
 
     public ImmutableArray<Entity> getEntities(){
