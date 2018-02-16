@@ -24,7 +24,8 @@ public class Entity {
 
     public final Signal<EntityComponentEvent> componentSignal = new Signal<EntityComponentEvent>();
     private final Component[] components;
-    Array<Component> componentArray = new Array<Component>(5);
+    Array<Component> componentArray = new Array<Component>(12);
+    Array<Subscription> subscriptions;
 
     private Engine engine;
 
@@ -111,6 +112,37 @@ public class Entity {
         this.angle = angleNormalizator.normalize(angle);
     }
 
+
+    //*****************//
+    //* SUBSCRIPTIONS *//
+    //*****************//
+
+
+    /**
+     * Подписывается на ивенты движка (Возможно только после того как Entity был добавлен в движок)
+     * Автоматически отписывается когда Enitity удаляется из движка
+     */
+    protected final<T> void subscribe(Subscription<T> subscription){
+        if (subscriptions == null){
+            subscriptions = new Array<Subscription>(5);
+        }
+        subscriptions.add(subscription);
+        engine.subscribe(subscription.clazz, subscription);
+    }
+
+    protected final void unsubscribe(Subscription subscription){
+        engine.unsubscribe(subscription.clazz, subscription);
+    }
+
+    protected final void unsubscribeAll() {
+        if (subscriptions != null){
+            for (Subscription subscription : subscriptions) {
+                engine.unsubscribe(subscription.clazz, subscription);
+            }
+            subscriptions = null;
+        }
+    }
+
     //ENGINE events
 
     final void addToEngine(Engine engine){
@@ -120,6 +152,7 @@ public class Entity {
 
     final void removeFromEngine(){
         Engine engine = this.engine;
+        unsubscribeAll();
         this.engine = null;
         removedFromEngine(engine);
     }
