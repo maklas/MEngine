@@ -52,12 +52,12 @@ public class Entity {
 
     // COMPONENT MANIPULATION
 
-    public Entity add(Component component){
+    public final Entity add(Component component){
         Class aClass = component.getClass();
         return add(component, ComponentMapper.of(aClass));
     }
 
-    public <T extends Component> Entity add(T component, ComponentMapper<T> mapper){
+    public final <T extends Component> Entity add(T component, ComponentMapper<T> mapper){
         Component oldComponent = components[mapper.id];
         if (oldComponent != null){
             componentArray.removeValue(oldComponent, true);
@@ -73,11 +73,11 @@ public class Entity {
         return this;
     }
 
-    public Component remove(Class<? extends Component> cClass){
+    public final Component remove(Class<? extends Component> cClass){
         return remove(ComponentMapper.of(cClass));
     }
 
-    public Component remove(ComponentMapper mapper){
+    public final Component remove(ComponentMapper mapper){
         Component component = components[mapper.id];
         components[mapper.id] = null;
         if (component != null) {
@@ -90,12 +90,12 @@ public class Entity {
     }
 
     @SuppressWarnings("all")
-    public <T extends Component> T get(ComponentMapper<T> mapper){
+    public final <T extends Component> T get(ComponentMapper<T> mapper){
         return (T) components[mapper.id];
     }
 
     @SuppressWarnings("all")
-    public <T extends Component> T get(Class<T> cClass){
+    public final <T extends Component> T get(Class<T> cClass){
         return (T) components[ComponentMapper.of(cClass).id];
     }
 
@@ -103,11 +103,11 @@ public class Entity {
 
     //GETTERS/SETTERS
 
-    public float getAngle() {
+    public final float getAngle() {
         return angle;
     }
 
-    public void setAngle(float angle) {
+    public final void setAngle(float angle) {
         this.angle = angleNormalizator.normalize(angle);
     }
 
@@ -149,7 +149,7 @@ public class Entity {
                 '}';
     }
 
-    public String toStringWithComponents(){
+    public final String toStringWithComponents(){
         return "Entity = {" +
                 "id=" + id +
                 ", x=" + x +
@@ -159,7 +159,7 @@ public class Entity {
                 '}';
     }
 
-    public void rotate(float angle) {
+    public final void rotate(float angle) {
         this.angle = angleNormalizator.normalize(this.angle + angle);
     }
 }
