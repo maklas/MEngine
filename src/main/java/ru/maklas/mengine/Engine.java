@@ -100,7 +100,7 @@ public class Engine {
             return;
         }
         systemManager.addSystem(system);
-        system.setEngine(this);
+        system.addToEngine(this);
     }
 
     public void remove(EntitySystem system){
