@@ -176,6 +176,7 @@ public class Entity {
     public String toString() {
         return "Entity{" +
                 "id=" + id +
+                ", type=" + type +
                 ", x=" + x +
                 ", y=" + y +
                 ", zOrder=" + zOrder +

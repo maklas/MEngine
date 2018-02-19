@@ -183,6 +183,18 @@ public class Engine {
         dispatcher.dispatch(event);
     }
 
+    /**
+     * Dispatches event after current/next system update is finished
+     */
+    public void dispatchLater(final Object event){
+        pendingOperations.addLast(new Runnable() {
+            @Override
+            public void run() {
+                dispatcher.dispatch(event);
+            }
+        });
+    }
+
     private Queue<Runnable> pendingOperations = new Queue<Runnable>();
     private void processPendingOperations() {
         Queue<Runnable> pendingOperations = this.pendingOperations;
