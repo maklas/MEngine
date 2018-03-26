@@ -70,6 +70,21 @@ class SystemManager {
         return systems;
     }
 
+    public EntitySystem[] getAll() {
+
+        final int size = renderSystem == null ? systems.size : systems.size + 1;
+        EntitySystem[] ret = new EntitySystem[size];
+        for (int i = 0; i < size; i++) {
+            ret[i] = systems.get(i);
+        }
+
+        if (renderSystem != null){
+            ret[size - 1] = renderSystem;
+        }
+
+        return ret;
+    }
+
     private static class SystemComparator implements Comparator<EntitySystem> {
         @Override
         public int compare(EntitySystem a, EntitySystem b) {

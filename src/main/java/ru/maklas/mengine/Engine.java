@@ -1,6 +1,7 @@
 package ru.maklas.mengine;
 
 import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.Queue;
 import org.jetbrains.annotations.Nullable;
 import ru.maklas.mengine.systems.RenderEntitySystem;
@@ -9,13 +10,14 @@ import ru.maklas.mengine.utils.ImmutableArray;
 import ru.maklas.mengine.utils.Listener;
 import ru.maklas.mengine.utils.Signal;
 
-public class Engine {
+public class Engine implements Disposable {
 
     public static int TOTAL_COMPONENTS = 64;
     public static final int COLLISION_SYSTEM_PRIORITY = 1000;
     public static final int RENDER_SYSTEM_PRIORITY = 2000;
     public static boolean UPDATE_ENTITIES_AFTER_ENGINE = true;
 
+    private final DisposeOperation disposeOperation = new DisposeOperation();
     private final Array<Entity> entities;
     private final Array<UpdatableEntity> updatableEntities;
     private final ImmutableArray<Entity> immutableEntities;
@@ -171,12 +173,12 @@ public class Engine {
         processPendingOperations();
     }
 
-    public <T> void subscribe(Class<T> type, Listener<T> listener) {
-        dispatcher.subscribe(listener, type);
+    public <T> void subscribe(Subscription<T> subscription) {
+        dispatcher.subscribe(subscription);
     }
 
-    public <T> void unsubscribe(Class<T> type, Listener<T> listener){
-        dispatcher.unsubscrive(listener, type);
+    public <T> void unsubscribe(Subscription<T> subscription){
+        dispatcher.unsubscrive(subscription);
     }
 
     public void dispatch(Object event){
@@ -222,6 +224,36 @@ public class Engine {
         return groupManager.of(componentClass).immutables;
     }
 
+    /**
+     * Removes:
+     * 1. All Entities;
+     * 2. All Systems;
+     * 4. All Listeners;
+     * 3. Clears Dispatchers.
+     */
+    public void dispose(){
+        if (updating){
+            pendingOperations.addLast(disposeOperation);
+            return;
+        }
+
+        Entity[] entities = this.entities.toArray(Entity.class);
+
+        for (Entity entity : entities) {
+            remove(entity);
+        }
+
+        final EntitySystem[] allSystems = systemManager.getAll();
+        for (EntitySystem system : allSystems) {
+            remove(system);
+        }
+
+        this.dispatcher.clear();
+        this.groupManager.clearAll();
+        this.entities.clear();
+        this.updatableEntities.clear();
+        this.listeners.clear();
+    }
 
     private class AddSystemOperation implements Runnable{
 
@@ -248,6 +280,14 @@ public class Engine {
         @Override
         public void run() {
             remove(system);
+        }
+    }
+
+    private class DisposeOperation implements Runnable{
+
+        @Override
+        public void run() {
+            dispose();
         }
     }
 }

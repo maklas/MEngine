@@ -13,7 +13,7 @@ public class Entity {
         }
     };
 
-    public static AngleNormalizator angleNormalizator = new AngleNormalizator360();
+    public static AngleNormalizer angleNormalizer = new AngleNormalizer360();
 
     public int id = -1;
     public float x;
@@ -109,7 +109,7 @@ public class Entity {
     }
 
     public final void setAngle(float angle) {
-        this.angle = angleNormalizator.normalize(angle);
+        this.angle = angleNormalizer.normalize(angle);
     }
 
 
@@ -127,17 +127,17 @@ public class Entity {
             subscriptions = new Array<Subscription>(5);
         }
         subscriptions.add(subscription);
-        engine.subscribe(subscription.clazz, subscription);
+        engine.subscribe(subscription);
     }
 
     protected final void unsubscribe(Subscription subscription){
-        engine.unsubscribe(subscription.clazz, subscription);
+        engine.unsubscribe(subscription);
     }
 
     protected final void unsubscribeAll() {
         if (subscriptions != null){
             for (Subscription subscription : subscriptions) {
-                engine.unsubscribe(subscription.clazz, subscription);
+                engine.unsubscribe(subscription);
             }
             subscriptions = null;
         }
@@ -169,6 +169,10 @@ public class Entity {
 
     protected void removedFromEngine(Engine engine){}
 
+    public final void rotate(float angle) {
+        this.angle = angleNormalizer.normalize(this.angle + angle);
+    }
+
 
     //STRINGS
 
@@ -191,9 +195,5 @@ public class Entity {
                 ", zOrder=" + zOrder +
                 ", Components=" + componentArray.toString() +
                 '}';
-    }
-
-    public final void rotate(float angle) {
-        this.angle = angleNormalizator.normalize(this.angle + angle);
     }
 }

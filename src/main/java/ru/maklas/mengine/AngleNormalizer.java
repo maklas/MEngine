@@ -1,6 +1,6 @@
 package ru.maklas.mengine;
 
-public interface AngleNormalizator {
+public interface AngleNormalizer {
 
     float normalize(float angle);
 }

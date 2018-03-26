@@ -1,6 +1,6 @@
 package ru.maklas.mengine;
 
-public class AngleNormalizator180 implements AngleNormalizator {
+public class AngleNormalizer180 implements AngleNormalizer {
 
     @Override
     public float normalize(float angle) {

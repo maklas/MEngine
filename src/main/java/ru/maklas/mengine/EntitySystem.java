@@ -62,17 +62,17 @@ public abstract class EntitySystem {
             subscriptions = new Array<Subscription>(5);
         }
         subscriptions.add(subscription);
-        engine.subscribe(subscription.clazz, subscription);
+        engine.subscribe(subscription);
     }
 
     protected final void unsubscribe(Subscription subscription){
-        engine.unsubscribe(subscription.clazz, subscription);
+        engine.unsubscribe(subscription);
     }
 
     protected final void unsubscribeAll() {
         if (subscriptions != null){
             for (Subscription subscription : subscriptions) {
-                engine.unsubscribe(subscription.clazz, subscription);
+                engine.unsubscribe(subscription);
             }
             subscriptions = null;
         }

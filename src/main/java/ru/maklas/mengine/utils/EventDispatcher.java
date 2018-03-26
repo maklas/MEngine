@@ -1,26 +1,27 @@
 package ru.maklas.mengine.utils;
 
 import com.badlogic.gdx.utils.ObjectMap;
+import ru.maklas.mengine.Subscription;
 
 public class EventDispatcher {
 
     private final ObjectMap<Class, Signal> map = new ObjectMap<Class, Signal>();
 
     @SuppressWarnings("all")
-    public <T> void subscribe(Listener<T> listener, Class<T> type){
-        Signal<T> signal = map.get(type);
+    public <T> void subscribe(Subscription<T> subscription){
+        Signal<T> signal = map.get(subscription.clazz);
         if (signal == null){
             signal = new Signal<T>();
-            map.put(type, signal);
+            map.put(subscription.clazz, signal);
         }
-        signal.add(listener);
+        signal.add(subscription);
     }
 
     @SuppressWarnings("all")
-    public <T> void unsubscrive(Listener<T> listener, Class<T> type){
-        Signal<T> signal = map.get(type);
+    public <T> void unsubscrive(Subscription<T> subscription){
+        Signal<T> signal = map.get(subscription.clazz);
         if (signal != null){
-            signal.remove(listener);
+            signal.remove(subscription);
         }
     }
 
@@ -33,4 +34,7 @@ public class EventDispatcher {
     }
 
 
+    public void clear() {
+        map.clear();
+    }
 }
