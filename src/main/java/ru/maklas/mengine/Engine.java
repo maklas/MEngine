@@ -47,9 +47,9 @@ public class Engine implements Disposable {
         };
     }
 
-    public void execureAfterUpdate(Runnable runnable){
-        pendingOperations.addLast(runnable);
-    }
+    //*********************//
+    //* ADDING + REMOVING *//
+    //*********************//
 
     public Engine add(Entity entity){
         if (entity.getEngine() == this){
@@ -88,12 +88,10 @@ public class Engine implements Disposable {
     }
 
     public void removeAllEntities(){
+        final Entity[] entities = this.entities.toArray(Entity.class);
         for (Entity entity : entities) {
-            entity.componentSignal.remove(componentListener);
+            remove(entity);
         }
-
-        entities.clear();
-        groupManager.clearAll();
     }
 
     public void add(EntitySystem system){
@@ -116,6 +114,18 @@ public class Engine implements Disposable {
         }
     }
 
+    //***********//
+    //* GETTERS *//
+    //***********//
+
+    public ImmutableArray<Entity> getEntities(){
+        return immutableEntities;
+    }
+
+    public GroupManager getGroupManager() {
+        return groupManager;
+    }
+
     @Nullable
     public Entity getById(int id){
         Array.ArrayIterator<Entity> iterator = new Array.ArrayIterator<Entity>(entities);
@@ -128,13 +138,70 @@ public class Engine implements Disposable {
         return null;
     }
 
-    public ImmutableArray<Entity> getEntities(){
-        return immutableEntities;
+    public ImmutableArray<Entity> entitiesFor(Class<? extends Component> componentClass) {
+        return groupManager.of(componentClass).immutables;
     }
 
-    public GroupManager getGroupManager() {
-        return groupManager;
+
+    //*********************//
+    //* EVENT DISPATCHING *//
+    //*********************//
+
+
+
+    public <T> void subscribe(Subscription<T> subscription) {
+        dispatcher.subscribe(subscription);
     }
+
+    public <T> void unsubscribe(Subscription<T> subscription){
+        dispatcher.unsubscrive(subscription);
+    }
+
+    public void dispatch(Object event){
+        dispatcher.dispatch(event);
+    }
+
+    /**
+     * Dispatches event after current/next system update is finished
+     */
+    public void dispatchLater(final Object event){
+        pendingOperations.addLast(new Runnable() {
+            @Override
+            public void run() {
+                dispatcher.dispatch(event);
+            }
+        });
+    }
+
+    private Queue<Runnable> pendingOperations = new Queue<Runnable>();
+    private void processPendingOperations() {
+        Queue<Runnable> pendingOperations = this.pendingOperations;
+        while (pendingOperations.size > 0){
+            pendingOperations.removeFirst().run();
+        }
+    }
+
+    /**
+     * Executes this Runnable after all Systems are updated in {@link #update(float)}.
+     * Is used internally if asked to remove Entity/System during update().
+     * Also all {@link #dispatchLater(Object)} happen there
+     * @param runnable - Runnable to be executed later after Systems get their update
+     */
+    public void execureAfterUpdate(Runnable runnable){
+        pendingOperations.addLast(runnable);
+    }
+
+    public void addListener(EntityListener listener){
+        listeners.add(listener);
+    }
+
+    public boolean removeListener(EntityListener listener){
+        return listeners.removeValue(listener, true);
+    }
+
+    //********//
+    //* FLOW *//
+    //********//
 
     public void update(float dt){
         if(this.updating) {
@@ -173,55 +240,11 @@ public class Engine implements Disposable {
         processPendingOperations();
     }
 
-    public <T> void subscribe(Subscription<T> subscription) {
-        dispatcher.subscribe(subscription);
-    }
-
-    public <T> void unsubscribe(Subscription<T> subscription){
-        dispatcher.unsubscrive(subscription);
-    }
-
-    public void dispatch(Object event){
-        dispatcher.dispatch(event);
-    }
-
-    /**
-     * Dispatches event after current/next system update is finished
-     */
-    public void dispatchLater(final Object event){
-        pendingOperations.addLast(new Runnable() {
-            @Override
-            public void run() {
-                dispatcher.dispatch(event);
-            }
-        });
-    }
-
-    private Queue<Runnable> pendingOperations = new Queue<Runnable>();
-    private void processPendingOperations() {
-        Queue<Runnable> pendingOperations = this.pendingOperations;
-        while (pendingOperations.size > 0){
-            pendingOperations.removeFirst().run();
-        }
-    }
-
-    public void addListener(EntityListener listener){
-        listeners.add(listener);
-    }
-
-    public boolean removeListener(EntityListener listener){
-        return listeners.removeValue(listener, true);
-    }
-
     public void render() {
         RenderEntitySystem renderSystem = systemManager.getRenderSystem();
         if (renderSystem != null){
             renderSystem.render();
         }
-    }
-
-    public ImmutableArray<Entity> entitiesFor(Class<? extends Component> componentClass) {
-        return groupManager.of(componentClass).immutables;
     }
 
     /**
