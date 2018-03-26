@@ -7,7 +7,7 @@ package ru.maklas.mengine.utils;
 public interface Listener<T> {
     /**
      * @param signal The Signal that triggered event
-     * @param object The object passed on dispatch
+     * @param event The object passed on dispatch
      */
-    public void receive (Signal<T> signal, T object);
+    public void receive (Signal<T> signal, T event);
 }
