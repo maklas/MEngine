@@ -13,7 +13,6 @@ import ru.maklas.mengine.utils.Signal;
 public class Engine implements Disposable {
 
     public static int TOTAL_COMPONENTS = 64;
-    public static final int COLLISION_SYSTEM_PRIORITY = 1000;
     public static final int RENDER_SYSTEM_PRIORITY = 2000;
     public static boolean UPDATE_ENTITIES_AFTER_ENGINE = true;
 

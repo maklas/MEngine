@@ -3,7 +3,6 @@ package ru.maklas.mengine;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.ObjectMap;
 import org.jetbrains.annotations.Nullable;
-import ru.maklas.mengine.systems.CollisionEntitySystem;
 import ru.maklas.mengine.systems.RenderEntitySystem;
 
 import java.util.Comparator;
@@ -14,7 +13,6 @@ class SystemManager {
     private Array<EntitySystem> systems = new Array<EntitySystem>(true, 16);
     private ObjectMap<Class<?>, EntitySystem> systemsByClass = new ObjectMap<Class<?>, EntitySystem>();
     private RenderEntitySystem renderSystem;
-    private CollisionEntitySystem collisionSystem;
 
     public SystemManager() {
 
@@ -26,9 +24,6 @@ class SystemManager {
         if (system instanceof RenderEntitySystem){
             renderSystem = (RenderEntitySystem) system;
             return true;
-        }
-        if (system instanceof CollisionEntitySystem){
-            collisionSystem = (CollisionEntitySystem) system;
         }
         if (oldSytem != null) {
             removeSystem(oldSytem);
@@ -61,10 +56,6 @@ class SystemManager {
         return renderSystem;
     }
 
-    @Nullable
-    public CollisionEntitySystem getCollisionSystem() {
-        return collisionSystem;
-    }
 
     public Array<EntitySystem> getSystems() {
         return systems;
