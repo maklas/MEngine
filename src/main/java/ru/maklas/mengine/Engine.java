@@ -138,6 +138,9 @@ public class Engine implements Disposable {
         return groupManager.of(componentClass).immutables;
     }
 
+    public EventDispatcher getDispatcher() {
+        return dispatcher;
+    }
 
     //*********************//
     //* EVENT DISPATCHING *//

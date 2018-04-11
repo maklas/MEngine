@@ -15,20 +15,16 @@ public class GroupManager {
 
     public void componentAdded(Entity target, ComponentMapper<? extends Component> mapper){
         Group group = groups[mapper.id];
-        if (group == null){
-            return;
+        if (group != null) {
+            group.add(target);
         }
-
-        group.add(target);
     }
 
     public void componentRemoved(Entity target, ComponentMapper<? extends Component> mapper){
         Group group = groups[mapper.id];
-        if (group == null){
-            return;
+        if (group != null){
+            group.remove(target);
         }
-
-        group.remove(target);
     }
 
     public void entityAdded(Entity entity){
