@@ -3,7 +3,6 @@ package ru.maklas.mengine;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.ObjectMap;
 import org.jetbrains.annotations.Nullable;
-import ru.maklas.mengine.systems.RenderEntitySystem;
 
 import java.util.Comparator;
 

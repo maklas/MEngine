@@ -4,7 +4,6 @@ import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.Queue;
 import org.jetbrains.annotations.Nullable;
-import ru.maklas.mengine.systems.RenderEntitySystem;
 import ru.maklas.mengine.utils.EventDispatcher;
 import ru.maklas.mengine.utils.ImmutableArray;
 import ru.maklas.mengine.utils.Listener;
@@ -196,6 +195,13 @@ public class Engine implements Disposable {
 
     public boolean removeListener(EntityListener listener){
         return listeners.removeValue(listener, true);
+    }
+
+    public void invalidateRenderZ(){
+        RenderEntitySystem renderSystem = systemManager.getRenderSystem();
+        if (renderSystem != null){
+            renderSystem.invalidate();
+        }
     }
 
     //********//

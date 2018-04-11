@@ -96,6 +96,11 @@ public class Entity {
     }
 
     @SuppressWarnings("all")
+    final Component get(int mapperKey){
+        return components[mapperKey];
+    }
+
+    @SuppressWarnings("all")
     public final <T extends Component> T get(Class<T> cClass){
         return (T) components[ComponentMapper.of(cClass).id];
     }

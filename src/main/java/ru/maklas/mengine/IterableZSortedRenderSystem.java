@@ -1,15 +1,13 @@
-package ru.maklas.mengine.systems;
+package ru.maklas.mengine;
 
 import com.badlogic.gdx.utils.Array;
-import ru.maklas.mengine.ComponentMapper;
-import ru.maklas.mengine.Engine;
-import ru.maklas.mengine.Entity;
+import com.badlogic.gdx.utils.Sort;
 import ru.maklas.mengine.components.IRenderComponent;
 import ru.maklas.mengine.utils.ImmutableArray;
 
 import java.util.Comparator;
 
-public abstract class IterableZSortedRenderSystem<T extends IRenderComponent> extends RenderEntitySystem {
+public abstract class IterableZSortedRenderSystem<T extends IRenderComponent> extends RenderEntitySystem implements EntityListener {
 
     private final Class<T> componentClass;
     private final ComponentMapper<T> mapper;
@@ -33,30 +31,31 @@ public abstract class IterableZSortedRenderSystem<T extends IRenderComponent> ex
         entities = engine.entitiesFor(componentClass);
     }
 
-    public ImmutableArray<Entity> getEntities() {
-        return entities;
-    }
-
     @Override
+    @SuppressWarnings("all")
     public final void render() {
         Array<Entity> sortedEntities = this.sortedEntities;
-        ImmutableArray<Entity> entities = this.entities;
-        ComponentMapper<T> mapper = this.mapper;
+        final int mapperKey = this.mapper.id;
 
-
-        sortedEntities.clear();
-        for (Entity entity : entities) {
-            sortedEntities.add(entity);
+        if (!isValid()){
+            sort();
         }
-        sortedEntities.sort(zOrderComparator);
 
         renderStarted();
 
         for (Entity e : sortedEntities) {
-            renderEntity(e, e.get(mapper));
+            renderEntity(e, (T) e.get(mapperKey));
         }
 
         renderFinished();
+    }
+
+    private void sort() {
+        Array<Entity> sortedEntities = this.sortedEntities;
+        int size = entities.size();
+        sortedEntities.setSize(size);
+        System.arraycopy(entities.items(), 0, sortedEntities.items, 0, size);
+        Sort.instance().sort(sortedEntities.items, zOrderComparator,  0, size);
     }
 
     protected abstract void renderStarted();
@@ -64,4 +63,14 @@ public abstract class IterableZSortedRenderSystem<T extends IRenderComponent> ex
     protected abstract void renderEntity(Entity entity, T rc);
 
     protected abstract void renderFinished();
+
+    @Override
+    public final void entityAdded(Entity e) {
+        invalidate();
+    }
+
+    @Override
+    public final void entityRemoved(Entity e) {
+        invalidate();
+    }
 }

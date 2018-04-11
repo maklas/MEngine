@@ -74,6 +74,10 @@ public class ImmutableArray<T> implements Iterable<T> {
         return array.toString(separator);
     }
 
+    public T[] items(){
+        return array.items;
+    }
+
     @Override
     public Iterator<T> iterator () {
         if (iterable == null) {

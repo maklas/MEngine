@@ -5,7 +5,7 @@ import com.badlogic.gdx.utils.ObjectMap;
 public class ComponentMapper<T extends Component> {
 
     static int counter;
-    int id;
+    final int id;
 
 
     public ComponentMapper() {
