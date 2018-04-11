@@ -2,6 +2,7 @@ package ru.maklas.mengine;
 
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Pool;
+import ru.maklas.mengine.utils.AngleNormalizerNONE;
 import ru.maklas.mengine.utils.Signal;
 
 public class Entity {
@@ -13,7 +14,7 @@ public class Entity {
         }
     };
 
-    public static AngleNormalizer angleNormalizer = new AngleNormalizer360();
+    public static AngleNormalizer angleNormalizer = new AngleNormalizerNONE();
 
     public int id = -1;
     public float x;

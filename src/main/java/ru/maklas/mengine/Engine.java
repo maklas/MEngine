@@ -12,12 +12,10 @@ import ru.maklas.mengine.utils.Signal;
 public class Engine implements Disposable {
 
     public static int TOTAL_COMPONENTS = 64;
-    public static final int RENDER_SYSTEM_PRIORITY = 2000;
-    public static boolean UPDATE_ENTITIES_AFTER_ENGINE = true;
 
     private final DisposeOperation disposeOperation = new DisposeOperation();
     private final Array<Entity> entities;
-    private final Array<UpdatableEntity> updatableEntities;
+    final Array<UpdatableEntity> updatableEntities;
     private final ImmutableArray<Entity> immutableEntities;
     private final SystemManager systemManager;
     private final GroupManager groupManager;
@@ -216,30 +214,11 @@ public class Engine implements Disposable {
 
         Array<EntitySystem> systems = systemManager.getSystems();
 
-        if (UPDATE_ENTITIES_AFTER_ENGINE) {
             for (EntitySystem system : systems) {
                 if (system.isEnabled()) {
                     system.update(dt);
                 }
             }
-
-            for (UpdatableEntity updatableEntity : updatableEntities) {
-                updatableEntity.update(dt);
-            }
-
-        } else {
-
-            for (UpdatableEntity updatableEntity : updatableEntities) {
-                updatableEntity.update(dt);
-            }
-
-            for (EntitySystem system : systems) {
-                if (system.isEnabled()) {
-                    system.update(dt);
-                }
-            }
-        }
-
 
         updating = false;
         processPendingOperations();

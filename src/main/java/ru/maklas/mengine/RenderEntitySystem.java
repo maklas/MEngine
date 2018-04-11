@@ -6,7 +6,7 @@ public abstract class RenderEntitySystem extends EntitySystem {
     private boolean alwaysInvalidate = false;
 
     public RenderEntitySystem() {
-        super(Engine.RENDER_SYSTEM_PRIORITY);
+        super();
     }
 
     @Override
