@@ -66,9 +66,6 @@ public class Engine implements Disposable {
     }
 
     public boolean remove(Entity entity){
-        if (entity.getEngine() != this){
-            return false;
-        }
         if (entity instanceof UpdatableEntity){
             updatableEntities.removeValue((UpdatableEntity) entity, true);
         }

@@ -41,7 +41,6 @@ public class GroupManager {
         }
     }
 
-
     public Group of(ComponentMapper mapper){
         Group group = groups[mapper.id];
         if (group == null){
