@@ -1,6 +1,7 @@
 package ru.maklas.mengine;
 
 import com.badlogic.gdx.utils.Array;
+import ru.maklas.mengine.utils.Listener;
 
 public abstract class EntitySystem {
 
@@ -54,7 +55,7 @@ public abstract class EntitySystem {
 
 
     /**
-     * Подписывается на ивенты движка (Возможно только после того как Entity был добавлен в движок)
+     * Подписывается на ивенты движка (Возможно только после того как система была добавлена в движок)
      * Автоматически отписывается когда EntitySystem удаляется из движка
      */
     protected final<T> void subscribe(Subscription<T> subscription){
@@ -63,6 +64,16 @@ public abstract class EntitySystem {
         }
         subscriptions.add(subscription);
         engine.subscribe(subscription);
+    }
+
+    /**
+     * Подписывается на ивенты движка (Возможно только после того как система была добавлена в движок)
+     * Автоматически отписывается когда EntitySystem удаляется из движка
+     */
+    protected final<T> Subscription<T> subscribe(Class<T> eventClass, Listener<T> listener){
+        CompositSubscription<T> subscription = new CompositSubscription<T>(eventClass, listener);
+        subscribe(subscription);
+        return subscription;
     }
 
     protected final void unsubscribe(Subscription subscription){

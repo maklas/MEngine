@@ -3,6 +3,7 @@ package ru.maklas.mengine;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Pool;
 import ru.maklas.mengine.utils.AngleNormalizerNONE;
+import ru.maklas.mengine.utils.Listener;
 import ru.maklas.mengine.utils.Signal;
 
 public class Entity {
@@ -134,6 +135,17 @@ public class Entity {
         }
         subscriptions.add(subscription);
         engine.subscribe(subscription);
+    }
+
+
+    /**
+     * Подписывается на ивенты движка (Возможно только после того как Entity был добавлен в движок)
+     * Автоматически отписывается когда Enitity удаляется из движка
+     */
+    protected final<T> CompositSubscription<T> subscribe(Class<T> eventClass, Listener<T> listener){
+        CompositSubscription<T> subscription = new CompositSubscription<T>(eventClass, listener);
+        subscribe(subscription);
+        return subscription;
     }
 
     protected final void unsubscribe(Subscription subscription){
