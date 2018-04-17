@@ -7,6 +7,15 @@ import ru.maklas.mengine.utils.ImmutableArray;
 
 import java.util.Comparator;
 
+/**
+ * <p>
+ *     Automatically sorts Entities by their ZOder.
+ *     All is left is:
+ *     <li>Create rendering component that extends {@link IRenderComponent}</li>
+ *     <li>Create your own rendering implementation by extending this class</li>
+ * <p>Use {@link #invalidate()} or {@link Engine#invalidateRenderZ()} to re-sort Entities on next render.</p>
+ * </p>
+ */
 public abstract class IterableZSortedRenderSystem<T extends IRenderComponent> extends RenderEntitySystem implements EntityListener {
 
     private final Class<T> componentClass;

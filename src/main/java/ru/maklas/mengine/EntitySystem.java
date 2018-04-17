@@ -3,6 +3,9 @@ package ru.maklas.mengine;
 import com.badlogic.gdx.utils.Array;
 import ru.maklas.mengine.utils.Listener;
 
+/**
+ * System that iterates on Entities and their components each frame and mutates their state.
+ */
 public abstract class EntitySystem {
 
     private boolean enabled = true;
@@ -31,7 +34,7 @@ public abstract class EntitySystem {
         onAddedToEngine(engine);
     }
 
-    public final boolean isEnabled() {
+    public boolean isEnabled() {
         return enabled;
     }
 
@@ -55,8 +58,8 @@ public abstract class EntitySystem {
 
 
     /**
-     * Подписывается на ивенты движка (Возможно только после того как система была добавлена в движок)
-     * Автоматически отписывается когда EntitySystem удаляется из движка
+     * РџРѕРґРїРёСЃС‹РІР°РµС‚СЃСЏ РЅР° РёРІРµРЅС‚С‹ РґРІРёР¶РєР° (Р’РѕР·РјРѕР¶РЅРѕ С‚РѕР»СЊРєРѕ РїРѕСЃР»Рµ С‚РѕРіРѕ РєР°Рє СЃРёСЃС‚РµРјР° Р±С‹Р»Р° РґРѕР±Р°РІР»РµРЅР° РІ РґРІРёР¶РѕРє)
+     * РђРІС‚РѕРјР°С‚РёС‡РµСЃРєРё РѕС‚РїРёСЃС‹РІР°РµС‚СЃСЏ РєРѕРіРґР° EntitySystem СѓРґР°Р»СЏРµС‚СЃСЏ РёР· РґРІРёР¶РєР°
      */
     protected final<T> void subscribe(Subscription<T> subscription){
         if (subscriptions == null){
@@ -67,8 +70,8 @@ public abstract class EntitySystem {
     }
 
     /**
-     * Подписывается на ивенты движка (Возможно только после того как система была добавлена в движок)
-     * Автоматически отписывается когда EntitySystem удаляется из движка
+     * РџРѕРґРїРёСЃС‹РІР°РµС‚СЃСЏ РЅР° РёРІРµРЅС‚С‹ РґРІРёР¶РєР° (Р’РѕР·РјРѕР¶РЅРѕ С‚РѕР»СЊРєРѕ РїРѕСЃР»Рµ С‚РѕРіРѕ РєР°Рє СЃРёСЃС‚РµРјР° Р±С‹Р»Р° РґРѕР±Р°РІР»РµРЅР° РІ РґРІРёР¶РѕРє)
+     * РђРІС‚РѕРјР°С‚РёС‡РµСЃРєРё РѕС‚РїРёСЃС‹РІР°РµС‚СЃСЏ РєРѕРіРґР° EntitySystem СѓРґР°Р»СЏРµС‚СЃСЏ РёР· РґРІРёР¶РєР°
      */
     protected final<T> Subscription<T> subscribe(Class<T> eventClass, Listener<T> listener){
         CompositSubscription<T> subscription = new CompositSubscription<T>(eventClass, listener);

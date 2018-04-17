@@ -2,6 +2,9 @@ package ru.maklas.mengine;
 
 import com.badlogic.gdx.utils.ObjectMap;
 
+/**
+ * Maps components of Entities for really fast access
+ */
 public class ComponentMapper<T extends Component> {
 
     static int counter;

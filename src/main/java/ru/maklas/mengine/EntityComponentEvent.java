@@ -1,12 +1,11 @@
 package ru.maklas.mengine;
 
-public final class EntityComponentEvent {
+final class EntityComponentEvent {
 
     Entity entity;
     Component component;
     ComponentMapper mapper;
     boolean added;
-
 
     public Entity getEntity() {
         return entity;

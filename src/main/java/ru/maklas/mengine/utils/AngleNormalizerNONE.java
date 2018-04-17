@@ -6,6 +6,6 @@ public class AngleNormalizerNONE implements AngleNormalizer {
 
     @Override
     public float normalize(float angle) {
-        return 0;
+        return angle;
     }
 }

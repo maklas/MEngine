@@ -13,28 +13,28 @@ public class GroupManager {
     }
 
 
-    public void componentAdded(Entity target, ComponentMapper<? extends Component> mapper){
+    void componentAdded(Entity target, ComponentMapper<? extends Component> mapper){
         Group group = groups[mapper.id];
         if (group != null) {
             group.add(target);
         }
     }
 
-    public void componentRemoved(Entity target, ComponentMapper<? extends Component> mapper){
+    void componentRemoved(Entity target, ComponentMapper<? extends Component> mapper){
         Group group = groups[mapper.id];
         if (group != null){
             group.remove(target);
         }
     }
 
-    public void entityAdded(Entity entity){
+    void entityAdded(Entity entity){
         Array<Component> componentArray = entity.componentArray;
         for (Component component : componentArray) {
             componentAdded(entity, ComponentMapper.of(component.getClass()));
         }
     }
 
-    public void entityRemoved(Entity entity){
+    void entityRemoved(Entity entity){
         Array<Component> componentArray = entity.componentArray;
         for (Component component : componentArray) {
             componentRemoved(entity, ComponentMapper.of(component.getClass()));

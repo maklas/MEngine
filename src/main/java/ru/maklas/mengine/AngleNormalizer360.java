@@ -5,7 +5,6 @@ package ru.maklas.mengine;
  */
 public class AngleNormalizer360 implements AngleNormalizer {
 
-
     @Override
     public float normalize(float angle) {
         return (angle %= 360) < 0 ? angle + 360 : angle;

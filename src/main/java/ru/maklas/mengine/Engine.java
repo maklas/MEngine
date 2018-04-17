@@ -3,6 +3,7 @@ package ru.maklas.mengine;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.Queue;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ru.maklas.mengine.utils.EventDispatcher;
 import ru.maklas.mengine.utils.ImmutableArray;
@@ -25,6 +26,9 @@ public class Engine implements Disposable {
     private Array<EntityListener> listeners = new Array<EntityListener>();
     private Object userObject;
 
+    /**
+     * Default Engine constructor
+     */
     public Engine() {
         entities = new Array<Entity>(50);
         updatableEntities = new Array<UpdatableEntity>();
@@ -48,7 +52,10 @@ public class Engine implements Disposable {
     //* ADDING + REMOVING *//
     //*********************//
 
-    public Engine add(Entity entity){
+    /**
+     * Adds new Entity to the engine, notifying all EntityListeners
+     */
+    public Engine add(@NotNull Entity entity){
         if (entity.getEngine() == this){
             return this;
         }
@@ -66,7 +73,10 @@ public class Engine implements Disposable {
         return this;
     }
 
-    public boolean remove(Entity entity){
+    /**
+     * Removes Entity from Engine. Notifies listeners
+     */
+    public boolean remove(@NotNull Entity entity){
         if (entity instanceof UpdatableEntity){
             updatableEntities.removeValue((UpdatableEntity) entity, true);
         }
@@ -81,6 +91,10 @@ public class Engine implements Disposable {
         return true;
     }
 
+    /**
+     * Removes all Entities from the engine.
+     * If you stumble upon Concurrency Exception, please try trigger it later after engine update is finished.
+     */
     public void removeAllEntities(){
         final Entity[] entities = this.entities.toArray(Entity.class);
         for (Entity entity : entities) {
@@ -88,6 +102,9 @@ public class Engine implements Disposable {
         }
     }
 
+    /**
+     * Adds new Entity system to engine. Will replace EntitySystem of the same class
+     */
     public void add(EntitySystem system){
         if (updating){
             pendingOperations.addLast(new AddSystemOperation(system));
@@ -97,6 +114,9 @@ public class Engine implements Disposable {
         system.addToEngine(this);
     }
 
+    /**
+     * Removes specified EntitySystem by class
+     */
     public void remove(EntitySystem system){
         if (updating){
             pendingOperations.addLast(new RemoveSystemOperation(system));
@@ -112,14 +132,23 @@ public class Engine implements Disposable {
     //* GETTERS *//
     //***********//
 
+    /**
+     * All entities that were added to engine
+     */
     public ImmutableArray<Entity> getEntities(){
         return immutableEntities;
     }
 
+    /**
+     * GroupManager of this Engine
+     */
     public GroupManager getGroupManager() {
         return groupManager;
     }
 
+    /**
+     * Finds first Entity with the said ID. Not efficient if there are too many Entities.
+     */
     @Nullable
     public Entity getById(int id){
         Array.ArrayIterator<Entity> iterator = new Array.ArrayIterator<Entity>(entities);
@@ -132,18 +161,33 @@ public class Engine implements Disposable {
         return null;
     }
 
+    /**
+     * Uses GroupManager to receive Entity Array with specific component always present.
+     * Returns the same instance for the same component
+     */
     public ImmutableArray<Entity> entitiesFor(Class<? extends Component> componentClass) {
         return groupManager.of(componentClass).immutables;
     }
 
+    /**
+     * Event dispatcher for this Engine
+     */
     public EventDispatcher getDispatcher() {
         return dispatcher;
     }
 
+    /**
+     * Gets user Object. Use it EntitySystem or Entity injections, since all Entities and Systems have access to the engine.
+     * Most common use - model that contains your game data {player, internet socket, opponent, any other settings...}
+     */
     public Object getUserObject() {
         return userObject;
     }
 
+    /**
+     * Sets user Object. Use it EntitySystem or Entity injections, since all Entities and Systems have access to the engine.
+     * Most common use - model that contains your game data {player, internet socket, opponent, any other settings...}
+     */
     public void setUserObject(Object userObject) {
         this.userObject = userObject;
     }
@@ -152,22 +196,30 @@ public class Engine implements Disposable {
     //* EVENT DISPATCHING *//
     //*********************//
 
-
-
+    /**
+     * Subscribes for specific event. Don't forget to {@link #unsubscribe(Subscription) unsubscribe}
+     * This subscription won't receive Events that are instance of Subscription type. Only Events that <b>are</b> of that type
+     */
     public <T> void subscribe(Subscription<T> subscription) {
         dispatcher.subscribe(subscription);
     }
 
+    /**
+     * Unsubscribes for event.
+     */
     public <T> void unsubscribe(Subscription<T> subscription){
         dispatcher.unsubscrive(subscription);
     }
 
+    /**
+     * Dispatches event in Engine. All Subscriptions that are subscribed to the class of this event will be called
+     */
     public void dispatch(Object event){
         dispatcher.dispatch(event);
     }
 
     /**
-     * Dispatches event after current/next system update is finished
+     * Dispatches event after {@link #update(float) update method} is finished
      */
     public void dispatchLater(final Object event){
         pendingOperations.addLast(new Runnable() {
@@ -204,6 +256,9 @@ public class Engine implements Disposable {
         return listeners.removeValue(listener, true);
     }
 
+    /**
+     * Calls {@link RenderEntitySystem#invalidate()} on RenderSystem if present
+     */
     public void invalidateRenderZ(){
         RenderEntitySystem renderSystem = systemManager.getRenderSystem();
         if (renderSystem != null){
@@ -215,6 +270,10 @@ public class Engine implements Disposable {
     //* FLOW *//
     //********//
 
+    /**
+     * Updates all EntitySystems and dispatches delayed events.
+     * @param dt last frame time
+     */
     public void update(float dt){
         if(this.updating) {
             throw new IllegalStateException("Cannot call update() on an Engine that is already updating.");
@@ -233,6 +292,9 @@ public class Engine implements Disposable {
         processPendingOperations();
     }
 
+    /**
+     * Calls {@link RenderEntitySystem#render()} if System is present
+     */
     public void render() {
         RenderEntitySystem renderSystem = systemManager.getRenderSystem();
         if (renderSystem != null){
