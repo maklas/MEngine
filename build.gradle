@@ -39,6 +39,11 @@ task javadocJar(type: Jar, dependsOn: javadoc) {
     from javadoc.destinationDir
 }
 
+artifacts {
+    archives sourcesJar
+    archives javadocJar
+}
+
 dependencies {
     compile "com.badlogicgames.gdx:gdx:$gdxVersion"
     compile "org.jetbrains:annotations-java5:15.0"
