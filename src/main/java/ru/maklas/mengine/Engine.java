@@ -23,6 +23,7 @@ public class Engine implements Disposable {
     private final Listener<EntityComponentEvent> componentListener;
     private boolean updating;
     private Array<EntityListener> listeners = new Array<EntityListener>();
+    private Object userObject;
 
     public Engine() {
         entities = new Array<Entity>(50);
@@ -137,6 +138,14 @@ public class Engine implements Disposable {
 
     public EventDispatcher getDispatcher() {
         return dispatcher;
+    }
+
+    public Object getUserObject() {
+        return userObject;
+    }
+
+    public void setUserObject(Object userObject) {
+        this.userObject = userObject;
     }
 
     //*********************//
