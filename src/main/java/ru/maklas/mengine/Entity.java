@@ -20,7 +20,7 @@ public class Entity {
     /**
      * Id of the entity. Use it as you wish. MEngine's only interraction with it is only via {@link Engine#getById(int)}
      */
-    public int id = -1;
+    public int id = 0;
     /**
      * X position for Entity
      */

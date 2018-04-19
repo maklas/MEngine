@@ -14,16 +14,19 @@ public class Engine implements Disposable {
 
     public static int TOTAL_COMPONENTS = 64;
 
-    private final DisposeOperation disposeOperation = new DisposeOperation();
     private final Array<Entity> entities;
+    private final Array.ArrayIterator<Entity> getByIdIterator;
     final Array<UpdatableEntity> updatableEntities;
     private final ImmutableArray<Entity> immutableEntities;
-    private final SystemManager systemManager;
+    private final Listener<EntityComponentEvent> componentListener;
+    private Array<EntityListener> listeners = new Array<EntityListener>();
+
+    final SystemManager systemManager;
     private final GroupManager groupManager;
     private final EventDispatcher dispatcher;
-    private final Listener<EntityComponentEvent> componentListener;
-    private boolean updating;
-    private Array<EntityListener> listeners = new Array<EntityListener>();
+
+    boolean updating;
+    private final DisposeOperation disposeOperation = new DisposeOperation();
     private Object userObject;
 
     /**
@@ -31,6 +34,7 @@ public class Engine implements Disposable {
      */
     public Engine() {
         entities = new Array<Entity>(50);
+        getByIdIterator = new Array.ArrayIterator<Entity>(entities);
         updatableEntities = new Array<UpdatableEntity>();
         immutableEntities = new ImmutableArray<Entity>(entities);
         systemManager = new SystemManager();
@@ -151,7 +155,8 @@ public class Engine implements Disposable {
      */
     @Nullable
     public Entity getById(int id){
-        Array.ArrayIterator<Entity> iterator = new Array.ArrayIterator<Entity>(entities);
+        Array.ArrayIterator<Entity> iterator = getByIdIterator;
+        iterator.reset();
         while (iterator.hasNext()){
             Entity next = iterator.next();
             if (next.id == id){
@@ -230,8 +235,8 @@ public class Engine implements Disposable {
         });
     }
 
-    private Queue<Runnable> pendingOperations = new Queue<Runnable>();
-    private void processPendingOperations() {
+    final Queue<Runnable> pendingOperations = new Queue<Runnable>();
+    void processPendingOperations() {
         Queue<Runnable> pendingOperations = this.pendingOperations;
         while (pendingOperations.size > 0){
             pendingOperations.removeFirst().run();
