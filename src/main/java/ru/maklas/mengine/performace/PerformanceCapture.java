@@ -89,7 +89,7 @@ public class PerformanceCapture {
      *     <b>Systems</b> - shows frame time for each individual System you have in engine by their class name.
      * </li>
      * <li>
-     *     <b>Events</b> - shows frame time for fired and handled events by event class name.
+     *     <b>Events</b> - shows frame time for fired and handled events by event class name. CPS stands for Calls Per Second
      * </li>
      */
     @Override
@@ -153,7 +153,7 @@ public class PerformanceCapture {
     }
 
     private String captureResEvent(EventCapture capture){
-        return addSpacesRight("avg: " + micro(capture.averageNanoSeconds) + ", ", 17) + addSpacesRight("max: " + micro(capture.maxNanoSeconds) + ", ", 17) + addSpacesRight("min: " + micro(capture.minNanoSeconds) + ", ", 17) + ("framePart: " + framePercent(capture.averageNanoSeconds)) + ", CPF: " + microFormat.format(capture.callsPerFrame);
+        return addSpacesRight("avg: " + micro(capture.averageNanoSeconds) + ", ", 17) + addSpacesRight("max: " + micro(capture.maxNanoSeconds) + ", ", 17) + addSpacesRight("min: " + micro(capture.minNanoSeconds) + ", ", 17) + ("framePart: " + framePercent(capture.averageNanoSeconds)) + ", CPS: " + microFormat.format(capture.callsPerFrame * 60);
     }
 
     private String captureRes(ByIdCapture capture){

@@ -31,7 +31,7 @@ public class Test extends EntitySystem{
             }
         });
 
-        for (int i = 0; i < 200; i++) {
+        for (int i = 0; i < 1000; i++) {
             engine.update(0.016f);
             engine.render();
         }
@@ -48,6 +48,15 @@ public class Test extends EntitySystem{
             Entity entity = new Entity(MathUtils.random(100000));
             getEngine().add(entity);
             entity.add(new Component() {
+            });
+        }
+
+        if (getEngine().getEntities().size() > 1000){
+            getEngine().execureAfterUpdate(new Runnable() {
+                @Override
+                public void run() {
+                    getEngine().removeAllEntities();
+                }
             });
         }
 
