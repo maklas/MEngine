@@ -153,7 +153,7 @@ public class PerformanceCapture {
     }
 
     private String captureResEvent(EventCapture capture){
-        return addSpacesRight("avg: " + micro(capture.averageNanoSeconds) + ", ", 17) + addSpacesRight("max: " + micro(capture.maxNanoSeconds) + ", ", 17) + addSpacesRight("min: " + micro(capture.minNanoSeconds) + ", ", 17) + ("framePart: " + framePercent(capture.averageNanoSeconds)) + ", CPS: " + microFormat.format(capture.callsPerFrame * 60);
+        return addSpacesRight("avg: " + micro(capture.averageNanoSeconds) + ", ", 17) + addSpacesRight("max: " + micro(capture.maxNanoSeconds) + ", ", 17) + addSpacesRight("min: " + micro(capture.minNanoSeconds) + ", ", 17) + ("framePart: " + framePercent(capture.averageNanoSeconds)) + ", CPS: " + microFormat.format(capture.callsPerFrame * 60d);
     }
 
     private String captureRes(ByIdCapture capture){

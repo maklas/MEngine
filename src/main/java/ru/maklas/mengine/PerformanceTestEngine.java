@@ -15,7 +15,7 @@ public class PerformanceTestEngine extends Engine {
 
     Map<EntitySystem, LongAverager> systemTimerMap;
     Map<Class, LongAverager> eventTimerMap;
-    Map<Class, FloatAverager> eventAvgCallMap;
+    Map<Class, DoubleAverager> eventAvgCallMap;
     Map<Class, Integer> thisFrameEventCallMap;
     LongAverager delayedOperationsTimer;
     LongAverager engineTimer;
@@ -26,7 +26,7 @@ public class PerformanceTestEngine extends Engine {
     LongAverager byIdTimer;
     LongAverager byIdTimerPerFrame;
     long byIdTotalTimeThisFrame = 0;
-    FloatAverager byIdCallCounter;
+    DoubleAverager byIdCallCounter;
     int byIdCallsThisFrame = 0;
 
     public PerformanceTestEngine() {
@@ -39,8 +39,8 @@ public class PerformanceTestEngine extends Engine {
         renderTimer = new LongAverager(frames);
         byIdTimer = new LongAverager(frames);
         byIdTimerPerFrame = new LongAverager(frames);
-        byIdCallCounter = new FloatAverager(frames);
-        eventAvgCallMap = new HashMap<Class, FloatAverager>();
+        byIdCallCounter = new DoubleAverager(frames);
+        eventAvgCallMap = new HashMap<Class, DoubleAverager>();
         thisFrameEventCallMap = new HashMap<Class, Integer>();
     }
 
@@ -96,15 +96,15 @@ public class PerformanceTestEngine extends Engine {
     }
 
     private void countCPFs() {
-        byIdCallCounter.addFloat(byIdCallsThisFrame);
+        byIdCallCounter.addDouble(byIdCallsThisFrame);
         byIdTimerPerFrame.addLong(byIdTotalTimeThisFrame);
         for (Map.Entry<Class, Integer> e : thisFrameEventCallMap.entrySet()) {
-            FloatAverager avgr = eventAvgCallMap.get(e.getKey());
+            DoubleAverager avgr = eventAvgCallMap.get(e.getKey());
             if (avgr == null){
-                avgr = new FloatAverager(frames);
+                avgr = new DoubleAverager(frames);
                 eventAvgCallMap.put(e.getKey(), avgr);
             }
-            avgr.addFloat(e.getValue());
+            avgr.addDouble(e.getValue());
         }
 
         thisFrameEventCallMap.clear();
@@ -212,7 +212,7 @@ public class PerformanceTestEngine extends Engine {
         return new ClassCapture(timer.getAvg(), timer.getMax(), timer.getMin(), timer.size(), clazz);
     }
 
-    private static ByIdCapture fromTimer(LongAverager timer, long avgTimePerFrame, float callsPerFrame){
+    private static ByIdCapture fromTimer(LongAverager timer, long avgTimePerFrame, double callsPerFrame){
         return new ByIdCapture(timer.getAvg(), timer.getMax(), timer.getMin(), timer.size(), avgTimePerFrame, callsPerFrame);
     }
 }

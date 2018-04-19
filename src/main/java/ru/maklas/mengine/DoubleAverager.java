@@ -4,21 +4,21 @@ package ru.maklas.mengine;
  * Created by maklas on 07.10.2017.
  */
 
-class FloatAverager {
+class DoubleAverager {
 
-    private final float[] values;
-    private float avg = 0;
+    private final double[] values;
+    private double avg = 0;
     private int counter = 0;
 
 
-    public FloatAverager(int avgSize) {
+    public DoubleAverager(int avgSize) {
         if (avgSize <= 0 ){
             throw new ArrayIndexOutOfBoundsException();
         }
-        this.values = new float[avgSize];
+        this.values = new double[avgSize];
     }
 
-    public synchronized void addFloat(float val){
+    public void addDouble(double val){
         values[counter++] = val;
 
         if (counter == values.length){
@@ -27,8 +27,8 @@ class FloatAverager {
     }
 
     private void calculateAvg(){
-        float sum = 0;
-        for (float val : values) {
+        double sum = 0;
+        for (double val : values) {
             sum += val;
         }
 
@@ -36,14 +36,14 @@ class FloatAverager {
     }
 
 
-    public synchronized float getAvg(){
+    public double getAvg(){
         calculateAvg();
         return avg;
     }
 
-    public float getMin(){
-        float min = values[0];
-        for (float val : values) {
+    public double getMin(){
+        double min = values[0];
+        for (double val : values) {
             if (val < min){
                 min = val;
             }
@@ -51,9 +51,9 @@ class FloatAverager {
         return min;
     }
 
-    public float getMax(){
-        float max = values[0];
-        for (float val : values) {
+    public double getMax(){
+        double max = values[0];
+        for (double val : values) {
             if (val > max){
                 max = val;
             }
@@ -61,7 +61,7 @@ class FloatAverager {
         return max;
     }
 
-    public float getLast(){
+    public double getLast(){
         int frame = counter - 1;
         if (frame < 0){
             frame = values.length - 1;
@@ -69,11 +69,7 @@ class FloatAverager {
         return values[frame];
     }
 
-    public boolean madeCircle(){
-        return counter == values.length - 1;
-    }
-
-    public void fill(float f){
+    public void fill(double f){
         for (int i = 0; i < values.length; i++) {
             values[i] = f;
         }
