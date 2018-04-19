@@ -1,5 +1,6 @@
 package ru.maklas.mengine;
 
+import com.badlogic.gdx.math.MathUtils;
 import ru.maklas.mengine.components.IRenderComponent;
 import ru.maklas.mengine.utils.Signal;
 
@@ -44,7 +45,7 @@ public class Test extends EntitySystem{
     public void update(float dt) {
 
         for (int i = 0; i < 100; i++) {
-            Entity entity = new Entity();
+            Entity entity = new Entity(MathUtils.random(100000));
             getEngine().add(entity);
             entity.add(new Component() {
             });
@@ -52,9 +53,10 @@ public class Test extends EntitySystem{
 
 
         Entity byId = getEngine().getById(4);
-        for (int i = 0; i < 1000; i++) {
+        for (int i = 0; i < MathUtils.random(4); i++) {
             getEngine().dispatchLater(new Object());
         }
+        getEngine().invalidateRenderZ();
     }
 
 
@@ -65,11 +67,7 @@ public class Test extends EntitySystem{
 
         @Override
         protected void renderStarted() {
-            try {
-                Thread.sleep(1);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+
         }
 
         @Override
@@ -78,7 +76,7 @@ public class Test extends EntitySystem{
 
         @Override
         protected void renderFinished() {
-            invalidate();
+
         }
     }
 }

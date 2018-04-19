@@ -11,8 +11,8 @@ public class PerformanceCapture {
 
     NumberFormat percentFormat = new DecimalFormat("#0.00", new DecimalFormatSymbols(Locale.ENGLISH));
     NumberFormat microFormat = new DecimalFormat("#0.0", new DecimalFormatSymbols(Locale.ENGLISH));
-    Array<ClassCapture> systemCaptureArray = new Array<ClassCapture>();
-    Array<ClassCapture> eventCaptureArray = new Array<ClassCapture>();
+    Array<ClassCapture> systemCaptureArray;
+    Array<EventCapture> eventCaptureArray;
     Capture frameCapture;
     Capture engineCapture;
     ClassCapture renderCapture;
@@ -22,7 +22,7 @@ public class PerformanceCapture {
     ByIdCapture byIdCapture;
 
     public PerformanceCapture(Array<ClassCapture> systemCaptureArray,
-                              Array<ClassCapture> eventCaptureArray,
+                              Array<EventCapture> eventCaptureArray,
                               Capture updateCapture,
                               ClassCapture renderCapture,
                               Capture delayedOperationsCapture,
@@ -120,8 +120,8 @@ public class PerformanceCapture {
         }
 
         StringBuilder eventBuilder = new StringBuilder();
-        for (ClassCapture capture : eventCaptureArray) {
-            eventBuilder.append(captureRes(capture, eventClassNameMinimalSize)).append('\n');
+        for (EventCapture capture : eventCaptureArray) {
+            eventBuilder.append(captureResEvent(capture, eventClassNameMinimalSize)).append('\n');
         }
 
         return "Using last " + engineCapture.framesChecked + " frames" + '\n' +
@@ -144,8 +144,16 @@ public class PerformanceCapture {
         return addSpacesRight(capture.clazz.getSimpleName(), classnameSize) + " -> " + captureRes(capture);
     }
 
+    private String captureResEvent(EventCapture capture, int classnameSize){
+        return addSpacesRight(capture.clazz.getSimpleName(), classnameSize) + " -> " + captureResEvent(capture);
+    }
+
     private String captureRes(Capture capture){
         return addSpacesRight("avg: " + micro(capture.averageNanoSeconds) + ", ", 17) + addSpacesRight("max: " + micro(capture.maxNanoSeconds) + ", ", 17) + addSpacesRight("min: " + micro(capture.minNanoSeconds) + ", ", 17) + ("framePart: " + framePercent(capture.averageNanoSeconds));
+    }
+
+    private String captureResEvent(EventCapture capture){
+        return addSpacesRight("avg: " + micro(capture.averageNanoSeconds) + ", ", 17) + addSpacesRight("max: " + micro(capture.maxNanoSeconds) + ", ", 17) + addSpacesRight("min: " + micro(capture.minNanoSeconds) + ", ", 17) + ("framePart: " + framePercent(capture.averageNanoSeconds)) + ", CPF: " + microFormat.format(capture.callsPerFrame);
     }
 
     private String captureRes(ByIdCapture capture){

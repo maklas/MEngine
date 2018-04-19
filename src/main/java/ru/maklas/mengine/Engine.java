@@ -23,7 +23,7 @@ public class Engine implements Disposable {
 
     final SystemManager systemManager;
     private final GroupManager groupManager;
-    private final EventDispatcher dispatcher;
+    final EventDispatcher dispatcher;
 
     boolean updating;
     private final DisposeOperation disposeOperation = new DisposeOperation();

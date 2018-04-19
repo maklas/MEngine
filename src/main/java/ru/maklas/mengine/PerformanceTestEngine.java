@@ -3,10 +3,7 @@ package ru.maklas.mengine;
 import com.badlogic.gdx.utils.Array;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import ru.maklas.mengine.performace.ByIdCapture;
-import ru.maklas.mengine.performace.Capture;
-import ru.maklas.mengine.performace.PerformanceCapture;
-import ru.maklas.mengine.performace.ClassCapture;
+import ru.maklas.mengine.performace.*;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -18,6 +15,8 @@ public class PerformanceTestEngine extends Engine {
 
     Map<EntitySystem, LongAverager> systemTimerMap;
     Map<Class, LongAverager> eventTimerMap;
+    Map<Class, FloatAverager> eventAvgCallMap;
+    Map<Class, Integer> thisFrameEventCallMap;
     LongAverager delayedOperationsTimer;
     LongAverager engineTimer;
     LongAverager entityAddTimer;
@@ -41,6 +40,8 @@ public class PerformanceTestEngine extends Engine {
         byIdTimer = new LongAverager(frames);
         byIdTimerPerFrame = new LongAverager(frames);
         byIdCallCounter = new FloatAverager(frames);
+        eventAvgCallMap = new HashMap<Class, FloatAverager>();
+        thisFrameEventCallMap = new HashMap<Class, Integer>();
     }
 
     @Override
@@ -66,10 +67,7 @@ public class PerformanceTestEngine extends Engine {
 
     @Override
     public void update(float dt) {
-        byIdCallCounter.addFloat(byIdCallsThisFrame);
-        byIdTimerPerFrame.addLong(byIdTotalTimeThisFrame);
-        byIdTotalTimeThisFrame = 0;
-        byIdCallsThisFrame = 0;
+        countCPFs();
         long beforeUpdate = System.nanoTime();
         if(this.updating) {
             throw new IllegalStateException("Cannot call update() on an Engine that is already updating.");
@@ -95,6 +93,23 @@ public class PerformanceTestEngine extends Engine {
         long afterUpdate = System.nanoTime();
         delayedOperationsTimer.addLong(afterUpdate - beforePendings);
         engineTimer.addLong(afterUpdate - beforeUpdate);
+    }
+
+    private void countCPFs() {
+        byIdCallCounter.addFloat(byIdCallsThisFrame);
+        byIdTimerPerFrame.addLong(byIdTotalTimeThisFrame);
+        for (Map.Entry<Class, Integer> e : thisFrameEventCallMap.entrySet()) {
+            FloatAverager avgr = eventAvgCallMap.get(e.getKey());
+            if (avgr == null){
+                avgr = new FloatAverager(frames);
+                eventAvgCallMap.put(e.getKey(), avgr);
+            }
+            avgr.addFloat(e.getValue());
+        }
+
+        thisFrameEventCallMap.clear();
+        byIdTotalTimeThisFrame = 0;
+        byIdCallsThisFrame = 0;
     }
 
     @Override
@@ -123,9 +138,15 @@ public class PerformanceTestEngine extends Engine {
             eventTimerMap.put(eventClass, timer);
         }
         long start = System.nanoTime();
-        super.dispatch(event);
+        dispatcher.dispatch(event);
         long end = System.nanoTime();
         timer.addLong(end - start);
+        Integer integer = thisFrameEventCallMap.get(eventClass);
+        if (integer == null){
+            integer = 0;
+        }
+        integer++;
+        thisFrameEventCallMap.put(eventClass, integer);
     }
 
     @Override
@@ -164,11 +185,11 @@ public class PerformanceTestEngine extends Engine {
             systemCaptures.add(systemCapture);
         }
 
-        Array<ClassCapture> eventCapture = new Array<ClassCapture>();
+        Array<EventCapture> eventCapture = new Array<EventCapture>();
         Set<Map.Entry<Class, LongAverager>> eventEntries = eventTimerMap.entrySet();
         for (Map.Entry<Class, LongAverager> entry : eventEntries) {
             LongAverager averager = entry.getValue();
-            ClassCapture capt = new ClassCapture(averager.getAvg(), averager.getMax(), averager.getMin(), averager.size(), entry.getKey());
+            EventCapture capt = new EventCapture(averager.getAvg(), averager.getMax(), averager.getMin(), averager.size(), entry.getKey(), eventAvgCallMap.get(entry.getKey()).getAvg());
             eventCapture.add(capt);
         }
 
