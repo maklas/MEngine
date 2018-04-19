@@ -14,7 +14,7 @@ import java.util.Set;
 
 public class PerformanceTestEngine extends Engine {
 
-    public static int frames = 60;
+    public static int frames = 180;
 
     Map<EntitySystem, LongAverager> systemTimerMap;
     Map<Class, LongAverager> eventTimerMap;

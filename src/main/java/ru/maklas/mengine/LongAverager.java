@@ -9,6 +9,7 @@ class LongAverager {
     private final long[] values;
     private long avg = 0;
     private int counter = 0;
+    private boolean loopWasMade = false;
 
 
     public LongAverager(int avgSize) {
@@ -24,16 +25,18 @@ class LongAverager {
 
         if (counter == values.length){
             counter = 0;
+            loopWasMade = true;
         }
     }
 
 
     public long getMin(){
+        int countUpTo = loopWasMade ? values.length : counter;
         long[] values = this.values;
         long min = values[0];
-        for (long val : values) {
-            if (val < min){
-                min = val;
+        for (int i = 0; i < countUpTo; i++) {
+            if (values[i] < min){
+                min = values[i];
             }
         }
         return min;
@@ -44,35 +47,45 @@ class LongAverager {
     }
 
     public long getMax(){
+        int countUpTo = loopWasMade ? values.length : counter;
         long[] values = this.values;
         long max = values[0];
-        for (long val : values) {
-            if (val > max){
-                max = val;
+        for (int i = 0; i < countUpTo; i++) {
+            if (values[i] > max){
+                max = values[i];
             }
         }
         return max;
     }
 
     private void calculateAvg(){
-        long[] values = this.values;
-        long sum = 0;
+        if (loopWasMade){
+            long[] values = this.values;
+            long sum = 0;
 
-        for (long val : values) {
-            sum += val;
+            for (long val : values) {
+                sum += val;
+            }
+
+            avg = sum / values.length;
+        } else {
+            if (counter == 0){
+                avg = 0;
+            } else {
+                long[] values = this.values;
+                long sum = 0;
+                for (int i = 0; i < counter; i++) {
+                    sum += values[i];
+                }
+                avg = sum / counter;
+            }
         }
-
-        avg = sum / values.length;
     }
 
 
     public long getAvg(){
         calculateAvg();
         return avg;
-    }
-
-    public boolean madeCircle(){
-        return counter == values.length - 1;
     }
 
     public void fill(long i){

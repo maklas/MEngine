@@ -65,16 +65,15 @@ public class Test extends EntitySystem{
 
         @Override
         protected void renderStarted() {
-
-        }
-
-        @Override
-        protected void renderEntity(Entity entity, IRenderComponent rc) {
             try {
                 Thread.sleep(1);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
+        }
+
+        @Override
+        protected void renderEntity(Entity entity, IRenderComponent rc) {
         }
 
         @Override
