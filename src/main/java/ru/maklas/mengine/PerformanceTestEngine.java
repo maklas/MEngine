@@ -105,9 +105,8 @@ public class PerformanceTestEngine extends Engine {
                 eventAvgCallMap.put(e.getKey(), avgr);
             }
             avgr.addDouble(e.getValue());
+            e.setValue(0);
         }
-
-        thisFrameEventCallMap.clear();
         byIdTotalTimeThisFrame = 0;
         byIdCallsThisFrame = 0;
     }
