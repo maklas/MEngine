@@ -24,6 +24,7 @@ public class Engine implements Disposable {
     final SystemManager systemManager;
     private final GroupManager groupManager;
     final EventDispatcher dispatcher;
+    private final Bundler bundler;
 
     boolean updating;
     private final DisposeOperation disposeOperation = new DisposeOperation();
@@ -40,6 +41,7 @@ public class Engine implements Disposable {
         systemManager = new SystemManager();
         groupManager = new GroupManager(this);
         dispatcher = new EventDispatcher();
+        bundler = new Bundler();
         componentListener = new Listener<EntityComponentEvent>() {
             @Override
             public void receive(Signal<EntityComponentEvent> signal, EntityComponentEvent event) {
@@ -164,6 +166,10 @@ public class Engine implements Disposable {
             }
         }
         return null;
+    }
+
+    public Bundler getBundler() {
+        return bundler;
     }
 
     /**
