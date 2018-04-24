@@ -216,6 +216,17 @@ public class Engine implements Disposable {
     }
 
     /**
+     * Subscribes for specific event. Don't forget to {@link #unsubscribe(Subscription) unsubscribe}
+     * This subscription won't receive Events that are instance of Subscription type. Only Events that <b>are</b> of that type
+     * @return Subscription that is used to unsubscribe later.
+     */
+    public <T> Subscription<T> subscribe(Class<T> eventClass, Listener<T> listener) {
+        CompositSubscription<T> subscription = new CompositSubscription<T>(eventClass, listener);
+        dispatcher.subscribe(subscription);
+        return subscription;
+    }
+
+    /**
      * Unsubscribes for event.
      */
     public <T> void unsubscribe(Subscription<T> subscription){
@@ -317,8 +328,9 @@ public class Engine implements Disposable {
      * Removes:
      * 1. All Entities;
      * 2. All Systems;
-     * 4. All Listeners;
      * 3. Clears Dispatchers.
+     * 4. All Listeners;
+     * 5. Clears Bundler;
      */
     public void dispose(){
         if (updating){
@@ -326,12 +338,13 @@ public class Engine implements Disposable {
             return;
         }
 
+        //Entities
         Entity[] entities = this.entities.toArray(Entity.class);
-
         for (Entity entity : entities) {
             remove(entity);
         }
 
+        //Systems
         final EntitySystem[] allSystems = systemManager.getAll();
         for (EntitySystem system : allSystems) {
             remove(system);
@@ -342,6 +355,7 @@ public class Engine implements Disposable {
         this.entities.clear();
         this.updatableEntities.clear();
         this.listeners.clear();
+        this.bundler.clear();
     }
 
     private class AddSystemOperation implements Runnable{
