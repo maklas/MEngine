@@ -61,7 +61,7 @@ public abstract class EntitySystem {
      * Подписывается на ивенты движка (Возможно только после того как система была добавлена в движок)
      * Автоматически отписывается когда EntitySystem удаляется из движка
      */
-    protected final<T> void subscribe(Subscription<T> subscription){
+    protected final <T> void subscribe(Subscription<T> subscription){
         if (subscriptions == null){
             subscriptions = new Array<Subscription>(5);
         }
@@ -73,7 +73,7 @@ public abstract class EntitySystem {
      * Подписывается на ивенты движка (Возможно только после того как система была добавлена в движок)
      * Автоматически отписывается когда EntitySystem удаляется из движка
      */
-    protected final<T> Subscription<T> subscribe(Class<T> eventClass, Listener<T> listener){
+    protected final <T> Subscription<T> subscribe(Class<T> eventClass, Listener<T> listener){
         CompositSubscription<T> subscription = new CompositSubscription<T>(eventClass, listener);
         subscribe(subscription);
         return subscription;

@@ -1,13 +1,11 @@
 package ru.maklas.mengine.utils;
 
 /**
- * A simple Listener interface used to listen to a {@link Signal}.
- * @author Stefan Bachmann
+ * A simple Listener interface used to listen to a {@link EventDispatcher}.
  */
 public interface Listener<T> {
     /**
-     * @param signal The Signal that triggered event
-     * @param event The object passed on dispatch
+     * @param e The event passed on dispatch
      */
-    public void receive (Signal<T> signal, T event);
+    void receive (T e);
 }

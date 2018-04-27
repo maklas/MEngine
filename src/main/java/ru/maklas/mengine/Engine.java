@@ -44,7 +44,7 @@ public class Engine implements Disposable {
         bundler = new Bundler();
         componentListener = new Listener<EntityComponentEvent>() {
             @Override
-            public void receive(Signal<EntityComponentEvent> signal, EntityComponentEvent event) {
+            public void receive(EntityComponentEvent event) {
                 if (event.added){
                     groupManager.componentAdded(event.entity, event.mapper);
                 } else {

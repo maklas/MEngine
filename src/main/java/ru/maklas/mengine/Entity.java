@@ -191,7 +191,7 @@ public class Entity {
      * Automatically removes subscription when Entity is removed from Engine!
      * @return Subscription that was formed.
      */
-    protected final<T> Subscription<T> subscribe(Class<T> eventClass, Listener<T> listener){
+    protected final <T> Subscription<T> subscribe(Class<T> eventClass, Listener<T> listener){
         CompositSubscription<T> subscription = new CompositSubscription<T>(eventClass, listener);
         subscribe(subscription);
         return subscription;
