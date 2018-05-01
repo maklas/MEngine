@@ -49,7 +49,7 @@ public class Entity {
     public final Signal<EntityComponentEvent> componentSignal = new Signal<EntityComponentEvent>();
     private final Component[] components;
     private Array<Subscription> subscriptions;
-    private Engine engine;
+    Engine engine;
     Array<Component> componentArray = new Array<Component>(12);
 
     public Entity() {
