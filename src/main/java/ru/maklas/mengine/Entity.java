@@ -114,7 +114,7 @@ public class Entity {
     /**
      * Removes Component of specified ComponentMapper from this entity
      */
-    public final Component remove(ComponentMapper mapper){
+    public final <T extends Component> T remove(ComponentMapper<T> mapper){
         Component component = components[mapper.id];
         components[mapper.id] = null;
         if (component != null) {
@@ -123,7 +123,7 @@ public class Entity {
             componentSignal.dispatch(e);
             eventPool.free(e);
         }
-        return component;
+        return (T) component;
     }
 
     /**
