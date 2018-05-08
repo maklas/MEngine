@@ -23,7 +23,7 @@ public class Engine implements Disposable {
 
     final SystemManager systemManager;
     private final GroupManager groupManager;
-    final EventDispatcher dispatcher;
+    EventDispatcher dispatcher;
     private final Bundler bundler;
 
     boolean updating;
@@ -185,6 +185,13 @@ public class Engine implements Disposable {
      */
     public EventDispatcher getDispatcher() {
         return dispatcher;
+    }
+
+    /**
+     * Sets EventDispatcher for this Engine
+     */
+    public void setDispatcher(EventDispatcher dispatcher) {
+        this.dispatcher = dispatcher;
     }
 
     /**
