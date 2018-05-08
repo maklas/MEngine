@@ -26,7 +26,7 @@ public class Test extends EntitySystem{
         });
         engine.subscribe(new Subscription<Object>(Object.class) {
             @Override
-            public void receive(Signal<Object> signal, Object event) {
+            public void receive(Object event) {
                 String s = "Event!";
             }
         });

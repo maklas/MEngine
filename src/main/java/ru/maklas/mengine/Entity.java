@@ -49,7 +49,7 @@ public class Entity {
     public final Signal<EntityComponentEvent> componentSignal = new Signal<EntityComponentEvent>();
     private final Component[] components;
     private Array<Subscription> subscriptions;
-    private Engine engine;
+    Engine engine;
     Array<Component> componentArray = new Array<Component>(12);
 
     public Entity() {
@@ -114,7 +114,7 @@ public class Entity {
     /**
      * Removes Component of specified ComponentMapper from this entity
      */
-    public final Component remove(ComponentMapper mapper){
+    public final <T extends Component> T remove(ComponentMapper<T> mapper){
         Component component = components[mapper.id];
         components[mapper.id] = null;
         if (component != null) {
@@ -123,7 +123,7 @@ public class Entity {
             componentSignal.dispatch(e);
             eventPool.free(e);
         }
-        return component;
+        return (T) component;
     }
 
     /**
@@ -191,7 +191,7 @@ public class Entity {
      * Automatically removes subscription when Entity is removed from Engine!
      * @return Subscription that was formed.
      */
-    protected final<T> Subscription<T> subscribe(Class<T> eventClass, Listener<T> listener){
+    protected final <T> Subscription<T> subscribe(Class<T> eventClass, Listener<T> listener){
         CompositSubscription<T> subscription = new CompositSubscription<T>(eventClass, listener);
         subscribe(subscription);
         return subscription;

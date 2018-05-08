@@ -13,7 +13,7 @@ public class CompositSubscription<T> extends Subscription<T> {
     }
 
     @Override
-    public void receive(Signal<T> signal, T event) {
-        listener.receive(signal, event);
+    public void receive(T event) {
+        listener.receive(event);
     }
 }

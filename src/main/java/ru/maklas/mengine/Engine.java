@@ -44,7 +44,7 @@ public class Engine implements Disposable {
         bundler = new Bundler();
         componentListener = new Listener<EntityComponentEvent>() {
             @Override
-            public void receive(Signal<EntityComponentEvent> signal, EntityComponentEvent event) {
+            public void receive(EntityComponentEvent event) {
                 if (event.added){
                     groupManager.componentAdded(event.entity, event.mapper);
                 } else {
@@ -62,7 +62,7 @@ public class Engine implements Disposable {
      * Adds new Entity to the engine, notifying all EntityListeners
      */
     public Engine add(@NotNull Entity entity){
-        if (entity.getEngine() == this){
+        if (entity.engine == this){
             return this;
         }
         if (entity instanceof UpdatableEntity){
@@ -83,6 +83,9 @@ public class Engine implements Disposable {
      * Removes Entity from Engine. Notifies listeners
      */
     public boolean remove(@NotNull Entity entity){
+        if (entity.engine != this){
+            return false;
+        }
         if (entity instanceof UpdatableEntity){
             updatableEntities.removeValue((UpdatableEntity) entity, true);
         }
@@ -111,7 +114,7 @@ public class Engine implements Disposable {
     /**
      * Adds new Entity system to engine. Will replace EntitySystem of the same class
      */
-    public void add(EntitySystem system){
+    public void add(@NotNull EntitySystem system){
         if (updating){
             pendingOperations.addLast(new AddSystemOperation(system));
             return;
@@ -123,7 +126,7 @@ public class Engine implements Disposable {
     /**
      * Removes specified EntitySystem by class
      */
-    public void remove(EntitySystem system){
+    public void remove(@NotNull EntitySystem system){
         if (updating){
             pendingOperations.addLast(new RemoveSystemOperation(system));
             return;

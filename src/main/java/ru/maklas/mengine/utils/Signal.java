@@ -45,7 +45,7 @@ public class Signal<T> {
         final Object[] items = listeners.begin();
         for (int i = 0, n = listeners.size; i < n; i++) {
             Listener<T> listener = (Listener<T>)items[i];
-            listener.receive(this, object);
+            listener.receive(object);
         }
         listeners.end();
     }
