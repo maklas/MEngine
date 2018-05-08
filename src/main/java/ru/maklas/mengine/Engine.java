@@ -24,11 +24,10 @@ public class Engine implements Disposable {
     final SystemManager systemManager;
     private final GroupManager groupManager;
     EventDispatcher dispatcher;
-    private final Bundler bundler;
+    private Bundler bundler;
 
     boolean updating;
     private final DisposeOperation disposeOperation = new DisposeOperation();
-    private Object userObject;
 
     /**
      * Default Engine constructor
@@ -175,6 +174,10 @@ public class Engine implements Disposable {
         return bundler;
     }
 
+    public void setBundler(Bundler bundler) {
+        this.bundler = bundler;
+    }
+
     /**
      * Uses GroupManager to receive Entity Array with specific component always present.
      * Returns the same instance for the same component
@@ -195,22 +198,6 @@ public class Engine implements Disposable {
      */
     public void setDispatcher(EventDispatcher dispatcher) {
         this.dispatcher = dispatcher;
-    }
-
-    /**
-     * Gets user Object. Use it EntitySystem or Entity injections, since all Entities and Systems have access to the engine.
-     * Most common use - model that contains your game data {player, internet socket, opponent, any other settings...}
-     */
-    public Object getUserObject() {
-        return userObject;
-    }
-
-    /**
-     * Sets user Object. Use it EntitySystem or Entity injections, since all Entities and Systems have access to the engine.
-     * Most common use - model that contains your game data {player, internet socket, opponent, any other settings...}
-     */
-    public void setUserObject(Object userObject) {
-        this.userObject = userObject;
     }
 
     //*********************//
