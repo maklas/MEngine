@@ -8,7 +8,6 @@ import org.jetbrains.annotations.Nullable;
 import ru.maklas.mengine.utils.EventDispatcher;
 import ru.maklas.mengine.utils.ImmutableArray;
 import ru.maklas.mengine.utils.Listener;
-import ru.maklas.mengine.utils.Signal;
 
 public class Engine implements Disposable {
 
@@ -79,6 +78,32 @@ public class Engine implements Disposable {
     }
 
     /**
+     * Adds Entity right away if not updating engine.
+     * If engine is currently updating, Entity will wait for current updating system to finish it's update
+     * before adding this Entity
+     */
+    public Engine addLater(@NotNull final Entity entity){
+        if (updating){
+            inUpdateQueue.addLast(new AddEntityOperation(entity));
+            inUpdateDirty = true;
+        } else add(entity);
+        return this;
+    }
+
+    /**
+     * Removes Entity right away if not updating engine.
+     * If engine is currently updating, Entity will wait for current updating system to finish it's update
+     * before removing this Entity
+     */
+    public Engine removeLater(@NotNull final Entity entity){
+        if (updating){
+            inUpdateQueue.addLast(new RemoveEntityOperation(entity));
+            inUpdateDirty = true;
+        } else remove(entity);
+        return this;
+    }
+
+    /**
      * Removes Entity from Engine. Notifies listeners
      */
     public boolean remove(@NotNull Entity entity){
@@ -115,7 +140,7 @@ public class Engine implements Disposable {
      */
     public void add(@NotNull EntitySystem system){
         if (updating){
-            pendingOperations.addLast(new AddSystemOperation(system));
+            afterUpdateQueue.addLast(new AddSystemOperation(system));
             return;
         }
         systemManager.addSystem(system);
@@ -127,7 +152,7 @@ public class Engine implements Disposable {
      */
     public void remove(@NotNull EntitySystem system){
         if (updating){
-            pendingOperations.addLast(new RemoveSystemOperation(system));
+            afterUpdateQueue.addLast(new RemoveSystemOperation(system));
             return;
         }
         boolean b = systemManager.removeSystem(system);
@@ -238,33 +263,62 @@ public class Engine implements Disposable {
     }
 
     /**
-     * Dispatches event after {@link #update(float) update method} is finished
+     * Executes this Runnable after all Systems are updated in {@link #update(float)}.
+     * Is used internally if asked to remove System during update().
+     * @param runnable - Runnable to be executed later after Systems get their update
      */
-    public void dispatchLater(final Object event){
-        pendingOperations.addLast(new Runnable() {
-            @Override
-            public void run() {
-                dispatcher.dispatch(event);
-            }
-        });
+    public void executeAfterUpdate(Runnable runnable){
+        afterUpdateQueue.addLast(runnable);
     }
 
-    final Queue<Runnable> pendingOperations = new Queue<Runnable>();
-    void processPendingOperations() {
-        Queue<Runnable> pendingOperations = this.pendingOperations;
+    /**
+     * if engine is not updating right now, this will be executed right away,
+     * however if engine is updating, this Runnable will be called later, inbetween
+     * EntitySystems update.
+     * Also all {@link #dispatchLater(Object)} happen there
+     * @param runnable - Runnable to be executed later after Systems get their update
+     */
+    public void executeLater(Runnable runnable){
+        addToInUpdateIfUpdatingOrExecute(runnable);
+    }
+
+    /**
+     * Dispatches event right away if Engine is not updating.
+     * If updating, dispatches after next EntitySystem is finished updating
+     */
+    public void dispatchLater(final Object event){
+        if (!updating){
+            dispatch(event);
+        } else {
+            inUpdateDirty = true;
+            inUpdateQueue.addLast(new DispatchOperation(event));
+        }
+    }
+
+    final Queue<Runnable> afterUpdateQueue = new Queue<Runnable>();
+    void processAfterUpdateOperations() {
+        Queue<Runnable> pendingOperations = this.afterUpdateQueue;
         while (pendingOperations.size > 0){
             pendingOperations.removeFirst().run();
         }
     }
 
-    /**
-     * Executes this Runnable after all Systems are updated in {@link #update(float)}.
-     * Is used internally if asked to remove Entity/System during update().
-     * Also all {@link #dispatchLater(Object)} happen there
-     * @param runnable - Runnable to be executed later after Systems get their update
-     */
-    public void execureAfterUpdate(Runnable runnable){
-        pendingOperations.addLast(runnable);
+    final Queue<Runnable> inUpdateQueue = new Queue<Runnable>();
+    boolean inUpdateDirty = false;
+    void addToInUpdateIfUpdatingOrExecute(Runnable r){
+        if (updating){
+            inUpdateDirty = true;
+            inUpdateQueue.addLast(r);
+        } else {
+            r.run();
+        }
+    }
+    void processInUpdateOperations() {
+        Queue<Runnable> pendingOperations = this.inUpdateQueue;
+        while (pendingOperations.size > 0){
+            pendingOperations.removeFirst().run();
+        }
+        inUpdateDirty = false;
     }
 
     public void addListener(EntityListener listener){
@@ -305,10 +359,13 @@ public class Engine implements Disposable {
                 if (system.isEnabled()) {
                     system.update(dt);
                 }
+                if (inUpdateDirty){
+                    processInUpdateOperations();
+                }
             }
 
         updating = false;
-        processPendingOperations();
+        processAfterUpdateOperations();
     }
 
     /**
@@ -331,7 +388,7 @@ public class Engine implements Disposable {
      */
     public void dispose(){
         if (updating){
-            pendingOperations.addLast(disposeOperation);
+            afterUpdateQueue.addLast(disposeOperation);
             return;
         }
 
@@ -383,11 +440,53 @@ public class Engine implements Disposable {
         }
     }
 
+    private class AddEntityOperation implements Runnable{
+
+        Entity entity;
+
+        public AddEntityOperation(Entity entity) {
+            this.entity = entity;
+        }
+
+        @Override
+        public void run() {
+            add(entity);
+        }
+    }
+
+    private class RemoveEntityOperation implements Runnable {
+
+        private final Entity entity;
+
+        public RemoveEntityOperation(Entity e) {
+            this.entity = e;
+        }
+
+        @Override
+        public void run() {
+            remove(entity);
+        }
+    }
+
     private class DisposeOperation implements Runnable{
 
         @Override
         public void run() {
             dispose();
+        }
+    }
+
+    private class DispatchOperation implements Runnable{
+
+        final Object event;
+
+        public DispatchOperation(Object event) {
+            this.event = event;
+        }
+
+        @Override
+        public void run() {
+            dispatch(event);
         }
     }
 }

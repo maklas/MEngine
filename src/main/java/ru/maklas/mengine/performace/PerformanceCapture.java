@@ -106,7 +106,7 @@ public class PerformanceCapture {
             }
         }
 
-        int eventClassNameMinimalSize = eventCaptureArray.get(0).clazz.getSimpleName().length();
+        int eventClassNameMinimalSize = eventCaptureArray.size == 0 ? 1 : eventCaptureArray.get(0).clazz.getSimpleName().length();
         for (ClassCapture systemCapture : eventCaptureArray) {
             String className = systemCapture.clazz.getSimpleName();
             if (className.length() > eventClassNameMinimalSize){
