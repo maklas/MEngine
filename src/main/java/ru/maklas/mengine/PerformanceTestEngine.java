@@ -82,6 +82,10 @@ public class PerformanceTestEngine extends Engine {
             if (system.isEnabled()) {
                 system.update(dt);
             }
+
+            if (inUpdateDirty){
+                processInUpdateOperations();
+            }
             long afterSystem = System.nanoTime();
             systemTimerMap.get(system).addLong(afterSystem - beforeSystem);
         }
@@ -89,7 +93,7 @@ public class PerformanceTestEngine extends Engine {
         updating = false;
 
         long beforePendings = System.nanoTime();
-        processPendingOperations();
+        processAfterUpdateOperations();
         long afterUpdate = System.nanoTime();
         delayedOperationsTimer.addLong(afterUpdate - beforePendings);
         engineTimer.addLong(afterUpdate - beforeUpdate);
@@ -146,16 +150,6 @@ public class PerformanceTestEngine extends Engine {
         }
         integer++;
         thisFrameEventCallMap.put(eventClass, integer);
-    }
-
-    @Override
-    public void dispatchLater(final Object event) {
-        pendingOperations.addLast(new Runnable() {
-            @Override
-            public void run() {
-                dispatch(event);
-            }
-        });
     }
 
     @Override

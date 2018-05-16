@@ -1,5 +1,5 @@
 group 'ru.maklas.engine'
-version '0.2'
+version '0.2.5'
 
 apply plugin: 'eclipse'
 apply plugin: 'idea'
