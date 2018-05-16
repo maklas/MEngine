@@ -75,6 +75,14 @@ public class Entity {
 
     // COMPONENT MANIPULATION
 
+
+    /**
+     * Never remove from this array
+     */
+    public final Array<Component> getComponents() {
+        return componentArray;
+    }
+
     /**
      * Adds new Component to the entity. Replaces if this Entity already had component of this class.
      *
@@ -287,6 +295,7 @@ public class Entity {
     public final String toStringWithComponents(){
         return "Entity = {" +
                 "id=" + id +
+                ", type=" + type +
                 ", x=" + x +
                 ", y=" + y +
                 ", angle=" + angle +
