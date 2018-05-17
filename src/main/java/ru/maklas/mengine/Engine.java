@@ -263,6 +263,24 @@ public class Engine implements Disposable {
     }
 
     /**
+     * Dispatches event and catches all events of specified class into array.
+     * use {@link CatchResults#first()} to get first item or null if no events were caught
+     */
+    public <T> CatchResults<T> dispatchAndCatch(Object event, Class<T> catchEventClass){
+        final CatchResults<T> results = new CatchResults<T>();
+        Subscription<T> shortSubscription = new Subscription<T>(catchEventClass) {
+            @Override
+            public void receive(T e) {
+                results.add(e);
+            }
+        };
+        dispatcher.subscribe(shortSubscription);
+        dispatch(event);
+        dispatcher.unsubscrive(shortSubscription);
+        return results;
+    }
+
+    /**
      * Executes this Runnable after all Systems are updated in {@link #update(float)}.
      * Is used internally if asked to remove System during update().
      * @param runnable - Runnable to be executed later after Systems get their update

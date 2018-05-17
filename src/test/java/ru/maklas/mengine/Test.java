@@ -3,14 +3,20 @@ package ru.maklas.mengine;
 import com.badlogic.gdx.math.MathUtils;
 import ru.maklas.mengine.components.IRenderComponent;
 
-public class Test extends EntitySystem{
+public class Test extends EntitySystem {
 
     public static void main(String[] args) {
-        PerformanceTestEngine engine = new PerformanceTestEngine();
+        final PerformanceTestEngine engine = new PerformanceTestEngine();
 
         engine.add(new UpdatableEntitySystem());
         engine.add(new Test());
         engine.add(new RenderSystem());
+        engine.subscribe(new Subscription<Object>(Object.class) {
+            @Override
+            public void receive(Object e) {
+                engine.dispatch(new Entity());
+            }
+        });
 
         engine.addListener(new EntityListener() {
             @Override
