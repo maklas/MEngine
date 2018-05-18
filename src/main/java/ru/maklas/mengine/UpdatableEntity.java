@@ -12,4 +12,11 @@ public abstract class UpdatableEntity extends Entity{
         super(x, y, zOrder);
     }
 
+    public UpdatableEntity(int id, float x, float y, int zOrder) {
+        super(id, x, y, zOrder);
+    }
+
+    public UpdatableEntity(int id) {
+        super(id);
+    }
 }

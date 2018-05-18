@@ -179,6 +179,10 @@ public class Engine implements Disposable {
         return groupManager;
     }
 
+    public SystemManager getSystemManager() {
+        return systemManager;
+    }
+
     /**
      * Finds first Entity with the said ID. Not efficient if there are too many Entities.
      */
