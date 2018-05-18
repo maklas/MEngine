@@ -18,7 +18,7 @@ public class Entity {
     public static AngleNormalizer angleNormalizer = new AngleNormalizerNONE();
 
     /**
-     * Id of the entity. Use it as you wish. MEngine's only interraction with it is only via {@link Engine#getById(int)}
+     * Id of the entity. Use it as you wish. MEngine's only interraction with it is only via {@link Engine#findById(int)}
      */
     public int id = 0;
     /**

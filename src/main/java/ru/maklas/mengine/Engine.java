@@ -187,7 +187,7 @@ public class Engine implements Disposable {
      * Finds first Entity with the said ID. Not efficient if there are too many Entities.
      */
     @Nullable
-    public Entity getById(int id){
+    public Entity findById(int id){
         Array.ArrayIterator<Entity> iterator = getByIdIterator;
         iterator.reset();
         while (iterator.hasNext()){

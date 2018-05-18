@@ -70,10 +70,10 @@ public class PerformanceCapture {
      *     <b>Engine render</b> - how much time did it take for engine.render()
      * </li>
      * <li>
-     *     <b>Engine getById</b> - shows how much time did it take to find Entity by it's id using engine.getById().
+     *     <b>Engine findById</b> - shows how much time did it take to find Entity by it's id using engine.findById().
      *     <b>avg</b>, <b>min</b> and <b>max</b> indicates time per call, not per frame. However <b>framePart</b> measures
      *     how much time in percents this method took.
-     *     CPF means Calls Per Frame which indicates how many times getById() is called on each frame.
+     *     CPF means Calls Per Frame which indicates how many times findById() is called on each frame.
      * </li>
      * <li>
      *     <b>Delayed operations</b> - how much time did it take for delayed operations to be processed.
@@ -129,7 +129,7 @@ public class PerformanceCapture {
                 "Engine total       -> " + captureRes(frameCapture) + '\n' +
                 "Engine update      -> " + captureRes(engineCapture) + '\n' +
                 "Engine render      -> " + captureRes(renderCapture) + '\n' +
-                "Engine getById     -> " + captureRes(byIdCapture) + '\n' +
+                "Engine findById     -> " + captureRes(byIdCapture) + '\n' +
                 "Delayed operations -> " + captureRes(delayedOperationsCapture) + '\n' +
                 "Entity add         -> " + captureRes(entityAddCapture) + '\n' +
                 "Entity remove      -> " + captureRes(entityRemovedCapture) + '\n' +

@@ -54,9 +54,9 @@ public class PerformanceTestEngine extends Engine {
 
     @Nullable
     @Override
-    public Entity getById(int id) {
+    public Entity findById(int id) {
         long start = System.nanoTime();
-        Entity byId = super.getById(id);
+        Entity byId = super.findById(id);
         long end = System.nanoTime();
         long lasted = end - start;
         byIdTimer.addLong(lasted);

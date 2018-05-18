@@ -68,7 +68,7 @@ public class Test extends EntitySystem {
         }
 
 
-        Entity byId = getEngine().getById(4);
+        Entity byId = getEngine().findById(4);
         for (int i = 0; i < MathUtils.random(4); i++) {
             getEngine().dispatchLater(new Object());
         }
