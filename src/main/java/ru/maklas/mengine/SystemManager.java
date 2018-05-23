@@ -64,7 +64,7 @@ class SystemManager {
 
         final int size = renderSystem == null ? systems.size : systems.size + 1;
         EntitySystem[] ret = new EntitySystem[size];
-        for (int i = 0; i < size; i++) {
+        for (int i = 0; i < systems.size; i++) {
             ret[i] = systems.get(i);
         }
 
