@@ -395,7 +395,7 @@ public class Engine implements Disposable {
      */
     public void render() {
         RenderEntitySystem renderSystem = systemManager.getRenderSystem();
-        if (renderSystem != null){
+        if (renderSystem != null && renderSystem.isEnabled()){
             renderSystem.render();
         }
     }

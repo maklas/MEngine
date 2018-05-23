@@ -41,6 +41,13 @@ public abstract class IterableZSortedRenderSystem<T extends IRenderComponent> ex
     }
 
     @Override
+    public void onRemovedFromEngine(Engine e) {
+        super.onRemovedFromEngine(e);
+        entities = null;
+        sortedEntities.clear();
+    }
+
+    @Override
     @SuppressWarnings("all")
     public final void render() {
         Array<Entity> sortedEntities = this.sortedEntities;

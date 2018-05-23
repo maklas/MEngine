@@ -23,6 +23,12 @@ public class UpdatableEntitySystem extends EntitySystem {
     }
 
     @Override
+    public void onRemovedFromEngine(Engine e) {
+        super.onRemovedFromEngine(e);
+        entities = null;
+    }
+
+    @Override
     public void update(float dt) {
         Array<UpdatableEntity> updatableEntities = this.entities;
         for (UpdatableEntity ue : updatableEntities) {
