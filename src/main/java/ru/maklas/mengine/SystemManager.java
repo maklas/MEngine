@@ -6,18 +6,18 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Comparator;
 
-class SystemManager {
+public class SystemManager {
 
     private SystemComparator systemComparator = new SystemComparator();
     private Array<EntitySystem> systems = new Array<EntitySystem>(true, 16);
     private ObjectMap<Class<?>, EntitySystem> systemsByClass = new ObjectMap<Class<?>, EntitySystem>();
     private RenderEntitySystem renderSystem;
 
-    public SystemManager() {
+    SystemManager() {
 
     }
 
-    public boolean addSystem(EntitySystem system){
+    boolean addSystem(EntitySystem system){
         Class<? extends EntitySystem> systemType = system.getClass();
         EntitySystem oldSytem = getSystem(systemType);
         if (system instanceof RenderEntitySystem){
@@ -34,7 +34,7 @@ class SystemManager {
         return true;
     }
 
-    public boolean removeSystem(EntitySystem system){
+    boolean removeSystem(EntitySystem system){
         if(systems.removeValue(system, true)) {
             systemsByClass.remove(system.getClass());
             return true;
@@ -56,7 +56,7 @@ class SystemManager {
     }
 
 
-    public Array<EntitySystem> getSystems() {
+    Array<EntitySystem> getSystems() {
         return systems;
     }
 
