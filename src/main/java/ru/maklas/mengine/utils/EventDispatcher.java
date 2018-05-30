@@ -18,7 +18,7 @@ public class EventDispatcher {
     }
 
     @SuppressWarnings("all")
-    public <T> void unsubscrive(Subscription<T> subscription){
+    public <T> void unsubscribe(Subscription<T> subscription){
         Signal<T> signal = map.get(subscription.clazz);
         if (signal != null){
             signal.remove(subscription);

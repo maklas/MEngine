@@ -256,7 +256,7 @@ public class Engine implements Disposable {
      * Unsubscribes for event.
      */
     public <T> void unsubscribe(Subscription<T> subscription){
-        dispatcher.unsubscrive(subscription);
+        dispatcher.unsubscribe(subscription);
     }
 
     /**
@@ -280,7 +280,7 @@ public class Engine implements Disposable {
         };
         dispatcher.subscribe(shortSubscription);
         dispatch(event);
-        dispatcher.unsubscrive(shortSubscription);
+        dispatcher.unsubscribe(shortSubscription);
         return results;
     }
 
