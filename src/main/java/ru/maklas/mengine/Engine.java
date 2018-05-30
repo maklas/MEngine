@@ -13,8 +13,8 @@ public class Engine implements Disposable {
 
     public static int TOTAL_COMPONENTS = 64;
 
-    private final Array<Entity> entities;
-    private final Array.ArrayIterator<Entity> getByIdIterator;
+    final Array<Entity> entities;
+    private EntityFinder finder;
     final Array<UpdatableEntity> updatableEntities;
     private final ImmutableArray<Entity> immutableEntities;
     private final Listener<EntityComponentEvent> componentListener;
@@ -33,7 +33,7 @@ public class Engine implements Disposable {
      */
     public Engine() {
         entities = new Array<Entity>(50);
-        getByIdIterator = new Array.ArrayIterator<Entity>(entities);
+        finder = new DefaultEntityFinder(this);
         updatableEntities = new Array<UpdatableEntity>();
         immutableEntities = new ImmutableArray<Entity>(entities);
         systemManager = new SystemManager();
@@ -188,15 +188,7 @@ public class Engine implements Disposable {
      */
     @Nullable
     public Entity findById(int id){
-        Array.ArrayIterator<Entity> iterator = getByIdIterator;
-        iterator.reset();
-        while (iterator.hasNext()){
-            Entity next = iterator.next();
-            if (next.id == id){
-                return next;
-            }
-        }
-        return null;
+        return finder.find(this, id);
     }
 
     public Bundler getBundler() {
@@ -205,6 +197,10 @@ public class Engine implements Disposable {
 
     public void setBundler(Bundler bundler) {
         this.bundler = bundler;
+    }
+
+    public void setFinder(EntityFinder finder) {
+        this.finder = finder;
     }
 
     /**
