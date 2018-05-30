@@ -32,7 +32,7 @@ public class Engine implements Disposable {
      * Default Engine constructor
      */
     public Engine() {
-        entities = new Array<Entity>(50);
+        entities = new Array<Entity>(100);
         finder = new DefaultEntityFinder(this);
         updatableEntities = new Array<UpdatableEntity>();
         immutableEntities = new ImmutableArray<Entity>(entities);

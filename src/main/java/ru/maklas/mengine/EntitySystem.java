@@ -56,6 +56,9 @@ public abstract class EntitySystem {
     //* SUBSCRIPTIONS *//
     //*****************//
 
+    protected final void dispatch(Object event){
+        engine.dispatch(event);
+    }
 
     /**
      * Подписывается на ивенты движка (Возможно только после того как система была добавлена в движок)
