@@ -35,7 +35,9 @@ public class SystemManager {
     }
 
     boolean removeSystem(EntitySystem system){
-        if(systems.removeValue(system, true)) {
+        if (system == renderSystem){
+            renderSystem = null;
+        } else if(systems.removeValue(system, true)) {
             systemsByClass.remove(system.getClass());
             return true;
         }
