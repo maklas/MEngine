@@ -31,8 +31,9 @@ public class UpdatableEntitySystem extends EntitySystem {
     @Override
     public void update(float dt) {
         Array<UpdatableEntity> updatableEntities = this.entities;
-        for (UpdatableEntity ue : updatableEntities) {
-            ue.update(dt);
+        int size = updatableEntities.size;
+        for (int i = 0; i < size; i++) {
+            updatableEntities.get(i).update(dt);
         }
     }
 }

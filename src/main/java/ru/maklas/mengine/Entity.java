@@ -46,7 +46,7 @@ public class Entity {
     public int type = -1;
 
 
-    public final Signal<EntityComponentEvent> componentSignal = new Signal<EntityComponentEvent>();
+    public final Signal<EntityComponentEvent> componentSignal = new Signal<EntityComponentEvent>(2);
     private final Component[] components;
     private Array<Subscription> subscriptions;
     Engine engine;

@@ -26,6 +26,9 @@ public class ComponentMapper<T extends Component> {
         return componentMapper;
     }
 
+    public static int totalComponentMappersCreated(){
+        return counter;
+    }
 
     public T get(Entity entity){
         return entity.get(this);

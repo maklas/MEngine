@@ -11,7 +11,7 @@ public class EventDispatcher {
     public <T> void subscribe(Subscription<T> subscription){
         Signal<T> signal = map.get(subscription.clazz);
         if (signal == null){
-            signal = new Signal<T>();
+            signal = new Signal<T>(5);
             map.put(subscription.clazz, signal);
         }
         signal.add(subscription);

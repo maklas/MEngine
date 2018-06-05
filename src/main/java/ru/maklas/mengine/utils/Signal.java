@@ -14,6 +14,10 @@ public class Signal<T> {
         listeners = new SnapshotArray<Listener<T>>();
     }
 
+    public Signal (int capacity) {
+        listeners = new SnapshotArray<Listener<T>>(capacity);
+    }
+
     /**
      * Add a Listener to this Signal
      * @param listener The Listener to be added
