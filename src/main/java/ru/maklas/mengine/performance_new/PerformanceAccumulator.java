@@ -105,7 +105,7 @@ public class PerformanceAccumulator {
         }
         EventCapture capture = new EventCapture();
         capture.eventClass = eventClass;
-        capture.entitySystem = currentSystem.getClass();
+        capture.entitySystem = currentSystem == null ? null : currentSystem.getClass();
         capture.started = now;
         eventStack.add(capture);
     }
