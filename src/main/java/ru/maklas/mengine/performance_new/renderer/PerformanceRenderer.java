@@ -3,6 +3,8 @@ package ru.maklas.mengine.performance_new.renderer;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.utils.Array;
 import ru.maklas.mengine.TestEngine;
@@ -21,9 +23,11 @@ public class PerformanceRenderer {
     private final float width;
     private final float height;
     private final ShapeRenderer shapeRenderer;
+    private final SpriteBatch batch;
     private final OrthographicCamera cam;
     private final Array<RendererPoint> pointQueue;
 
+    public BitmapFont font;
     public Color borderColor = Color.BLACK;
     public Color updateColor = Color.GREEN;
     public Color renderColor = Color.BLUE;
@@ -41,6 +45,8 @@ public class PerformanceRenderer {
         this.height = height;
 
         shapeRenderer = new ShapeRenderer();
+        batch = new SpriteBatch();
+        font = new BitmapFont();
         cam = new OrthographicCamera();
         cam.setToOrtho(false, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         pointQueue = new Array<RendererPoint>(true, points);
@@ -55,6 +61,30 @@ public class PerformanceRenderer {
             renderGraphics();
         }
         shapeRenderer.end();
+
+        if (pointQueue.size > 0) {
+            batch.setProjectionMatrix(cam.combined);
+            batch.begin();
+            renderText();
+            batch.end();
+        }
+    }
+
+    private void renderText() {
+        float x = getTextX();
+        float y = getTextY();
+        float step = getTextStep();
+
+        RendererPoint current = pointQueue.peek();
+        batch.setColor(updateColor);
+        font.draw(batch, "update: " + current.engineUpdate + " us", x, y);
+        y -= step;
+        batch.setColor(renderColor);
+        font.draw(batch, "render: " + current.engineRender + " us", x, y);
+        y -= step;
+        batch.setColor(eventColor);
+        font.draw(batch, "event: " + current.events + " us", x, y);
+
     }
 
     private void updatePoints() {
@@ -105,8 +135,8 @@ public class PerformanceRenderer {
         for (int i = 0; i < size - 1; i++) {
             RendererPoint prev = queue.get(i);
             RendererPoint next = queue.get(i + 1);
-            float x1 = getX(i, size);
-            float x2 = getX(i + 1, size);
+            float x1 = getX(i);
+            float x2 = getX(i + 1);
             float y1 = getY(prev.engineUpdate, topValue);
             float y2 = getY(next.engineUpdate, topValue);
             shapeRenderer.line(x1, y1, x2, y2);
@@ -117,8 +147,8 @@ public class PerformanceRenderer {
         for (int i = 0; i < size - 1; i++) {
             RendererPoint prev = queue.get(i);
             RendererPoint next = queue.get(i + 1);
-            float x1 = getX(i, size);
-            float x2 = getX(i + 1, size);
+            float x1 = getX(i);
+            float x2 = getX(i + 1);
             float y1 = getY(prev.engineRender, topValue);
             float y2 = getY(next.engineRender, topValue);
             shapeRenderer.line(x1, y1, x2, y2);
@@ -129,16 +159,28 @@ public class PerformanceRenderer {
         for (int i = 0; i < size - 1; i++) {
             RendererPoint prev = queue.get(i);
             RendererPoint next = queue.get(i + 1);
-            float x1 = getX(i, size);
-            float x2 = getX(i + 1, size);
+            float x1 = getX(i);
+            float x2 = getX(i + 1);
             float y1 = getY(prev.events, topValue);
             float y2 = getY(next.events, topValue);
             shapeRenderer.line(x1, y1, x2, y2);
         }
     }
 
+    private float getTextX(){
+        return x + width;
+    }
 
-    private float getX(int pointId, int pointsSize){
+    private float getTextY(){
+        return y + height;
+    }
+
+    private float getTextStep(){
+        return 20;
+    }
+
+    private float getX(int pointId){
+        int pointsSize = points - 1;
         return x + (width * (1 - ((pointsSize - pointId) / (float) pointsSize)));
     }
 
