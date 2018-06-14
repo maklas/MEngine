@@ -77,12 +77,12 @@ public class PerformanceRenderer {
     }
 
     private int calculateTopValue(){
-        int max = 1000;
+        int max = 250;
         for (RendererPoint point : pointQueue) {
             int top = point.getHighest();
             if (top > max) max = top;
         }
-        return max;
+        return (int) (max * 1.1f);
     }
 
     private void renderText() {
@@ -135,10 +135,9 @@ public class PerformanceRenderer {
 
     private void renderGraphics() {
         Array<RendererPoint> queue = this.pointQueue;
-        int max = calculateTopValue();
 
         int size = queue.size;
-        int topValue = (int) (max * 1.1f);
+        int topValue = calculateTopValue();
 
 
         shapeRenderer.setColor(updateColor);
