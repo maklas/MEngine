@@ -2,6 +2,7 @@ package ru.maklas.mengine.performance_new;
 
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Pool;
+import org.jetbrains.annotations.Nullable;
 import ru.maklas.mengine.EntitySystem;
 import ru.maklas.mengine.RenderEntitySystem;
 import ru.maklas.mengine.performance_new.captures.EntityCapture;
@@ -40,8 +41,8 @@ public class FrameData implements Pool.Poolable {
         events.add(eventCapture);
     }
 
-    public void findById(int id, long time, EntitySystem currentSystem) {
-        finds.add(new FindByIDCapture(id, time, currentSystem.getClass()));
+    public void findById(int id, long time,@Nullable EntitySystem currentSystem) {
+        finds.add(new FindByIDCapture(id, time, currentSystem == null ? null : currentSystem.getClass()));
     }
 
     public void entityAdd(long time) {
