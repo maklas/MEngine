@@ -89,7 +89,7 @@ public class PerformanceRenderer {
     }
 
     private void renderGraphics() {
-        int max = 1000; //1 милисекунда.
+        int max = 1000;
         Array<RendererPoint> queue = this.pointQueue;
         for (RendererPoint point : queue) {
             int top = point.getHighest();
