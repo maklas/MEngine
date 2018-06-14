@@ -5,8 +5,10 @@ import ru.maklas.mengine.components.IRenderComponent;
 
 public class Test extends EntitySystem {
 
+    public static final int updateFrames = 1000;
+
     public static void main(String[] args) {
-        final PerformanceTestEngine engine = new PerformanceTestEngine();
+        final TestEngine engine = new TestEngine();
 
         engine.add(new UpdatableEntitySystem());
         engine.add(new Test());
@@ -21,27 +23,27 @@ public class Test extends EntitySystem {
         engine.addListener(new EntityListener() {
             @Override
             public void entityAdded(Entity e) {
-                String s = "added";
+
             }
 
             @Override
             public void entityRemoved(Entity e) {
-                String s = "removed";
+
             }
         });
         engine.subscribe(new Subscription<Object>(Object.class) {
             @Override
             public void receive(Object event) {
-                String s = "Event!";
+
             }
         });
 
-        for (int i = 0; i < 1000; i++) {
+        for (int i = 0; i < updateFrames; i++) {
             engine.update(0.016f);
             engine.render();
         }
 
-        System.out.println(engine.captureResults());
+        System.out.println(engine.captureResults().toString());
 
     }
 
@@ -83,7 +85,9 @@ public class Test extends EntitySystem {
 
         @Override
         protected void renderStarted() {
-
+            getEngine().findById(1);
+            getEngine().findById(1);
+            getEngine().findById(1);
         }
 
         @Override
