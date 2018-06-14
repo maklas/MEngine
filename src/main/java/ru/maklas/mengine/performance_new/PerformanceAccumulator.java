@@ -155,7 +155,7 @@ public class PerformanceAccumulator {
     }
 
 
-    public PerformanceResult captureResults() {
-        return new PerformanceResult(frameDatas, eventAccumulator);
+    public PerformanceResult captureResults(int entities) {
+        return new PerformanceResult(frameDatas, eventAccumulator, entities);
     }
 }

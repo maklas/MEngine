@@ -95,6 +95,6 @@ public class TestEngine extends Engine {
     }
 
     public PerformanceResult captureResults() {
-        return accumulator.captureResults();
+        return accumulator.captureResults(entities.size);
     }
 }

@@ -18,7 +18,14 @@ import java.util.Locale;
 
 public class PerformanceResult {
 
+    public static final int CALLS = 0;
+    public static final int INTERNAL = 1;
+    public static final int TOTAL = 2;
+
+    public static int EVENT_SORT_TYPE = TOTAL;
+
     int totalFrames;
+    int entities;
     EventAccumulator eventAccumulator;
     NamedData engineUpdate;
     NamedData engineRender;
@@ -30,8 +37,9 @@ public class PerformanceResult {
     Array<SystemData> systemDatas;
     Array<EventData> events;
 
-    public PerformanceResult(FrameData[] frames, EventAccumulator eventAccumulator) {
+    public PerformanceResult(FrameData[] frames, EventAccumulator eventAccumulator, int entities) {
         totalFrames = frames.length;
+        this.entities = entities;
         systemDatas = extractSystemDatas(frames);
         this.eventAccumulator = eventAccumulator;
         engineTotal = new NamedData("Engine total");
@@ -220,12 +228,7 @@ public class PerformanceResult {
             }
         });
 
-        events.sort(new Comparator<EventData>() {
-            @Override
-            public int compare(EventData o1, EventData o2) {
-                return (int) (o2.totalTime - o1.totalTime);
-            }
-        });
+        events.sort(EventData.getComparator(EVENT_SORT_TYPE));
     }
 
     @Override
@@ -314,6 +317,8 @@ public class PerformanceResult {
     private String allTimeEventsToString() {
         Array<EventData> events = eventAccumulator.get();
 
+        events.sort(EventData.getComparator(EVENT_SORT_TYPE));
+
         int len = 0;
         for (EventData event : events) {
             int classNameLen = event.eventClass.getSimpleName().length();
@@ -374,6 +379,7 @@ public class PerformanceResult {
                 entityRemove);
 
         return
+                addSpacesRight("Engine entities", len) + " -> " + entities + '\n' +
                 named(engineTotal, len) + '\n' +
                 named(engineUpdate, len) + '\n' +
                 named(engineRender, len) + '\n' +
