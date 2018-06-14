@@ -5,6 +5,7 @@ public class RendererPoint {
     public int engineUpdate;
     public int engineRender;
     public int events;
+    public int entities;
 
     public int getHighest(){
         int max = engineUpdate;

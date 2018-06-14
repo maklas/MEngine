@@ -32,6 +32,8 @@ public class PerformanceRenderer {
     public Color updateColor = Color.GREEN;
     public Color renderColor = Color.BLUE;
     public Color eventColor  = Color.RED;
+    public Color entityColor  = Color.YELLOW;
+    public Color netColor  = Color.LIGHT_GRAY;
 
     private int currentFrame = 0;
 
@@ -56,6 +58,7 @@ public class PerformanceRenderer {
         updatePoints();
         shapeRenderer.setProjectionMatrix(cam.combined);
         shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
+        drawNet();
         drawBorders();
         if (pointQueue.size > 1){
             renderGraphics();
@@ -69,6 +72,23 @@ public class PerformanceRenderer {
             renderText();
         }
         batch.end();
+    }
+
+    private void drawNet() {
+        shapeRenderer.setColor(netColor);
+        int top = calculateTopValue();
+        int horLines = top / 1000;
+
+
+        for (int i = 1; i < points; i++) {
+            float x = getX(i);
+            shapeRenderer.line(x, y, x, y + height);
+        }
+
+        for (int i = 1; i <= horLines; i++) {
+            float y = getY(i * 1000, top);
+            shapeRenderer.line(x, y, x + width, y);
+        }
     }
 
     private void renderGraphicNumbers() {
@@ -99,6 +119,9 @@ public class PerformanceRenderer {
         y -= step;
         font.setColor(eventColor);
         font.draw(batch, "event: " + current.events + " us", x, y);
+        y -= step;
+        font.setColor(entityColor);
+        font.draw(batch, "entities: " + current.entities, x, y);
 
     }
 
@@ -115,6 +138,7 @@ public class PerformanceRenderer {
         RendererPoint point = new RendererPoint();
         point.engineUpdate = getMicro(result.engineUpdate);
         point.engineRender = getMicro(result.engineRender);
+        point.entities = result.entities;
 
         int microEvents = 0;
         for (EventData event : result.events) {
@@ -202,7 +226,7 @@ public class PerformanceRenderer {
         return getMicro(data.totalTime, data.calls);
     }
     private int getMicro(long nano, int calls){
-        return (int) ((nano /1000) / calls);
+        return (int) ((nano/1000) / calls);
     }
 
 }
