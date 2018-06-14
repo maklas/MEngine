@@ -73,7 +73,7 @@ public class PerformanceRenderer {
 
     private void renderGraphicNumbers() {
         font.setColor(Color.WHITE);
-        font.draw(batch, String.valueOf(calculateTopValue()), x, y + height + 5);
+        font.draw(batch, String.valueOf(calculateTopValue()), x - 10, y + height + 15);
     }
 
     private int calculateTopValue(){
@@ -118,7 +118,7 @@ public class PerformanceRenderer {
 
         int microEvents = 0;
         for (EventData event : result.events) {
-            microEvents += getMicro(event.totalTime, event.calls);
+            microEvents += getMicro(event.internalTime, event.calls);
         }
         point.events = microEvents;
 
