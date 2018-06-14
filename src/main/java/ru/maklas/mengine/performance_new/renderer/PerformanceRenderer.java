@@ -62,12 +62,27 @@ public class PerformanceRenderer {
         }
         shapeRenderer.end();
 
+        batch.setProjectionMatrix(cam.combined);
+        batch.begin();
+        renderGraphicNumbers();
         if (pointQueue.size > 0) {
-            batch.setProjectionMatrix(cam.combined);
-            batch.begin();
             renderText();
-            batch.end();
         }
+        batch.end();
+    }
+
+    private void renderGraphicNumbers() {
+        font.setColor(Color.WHITE);
+        font.draw(batch, String.valueOf(calculateTopValue()), x, y + height + 5);
+    }
+
+    private int calculateTopValue(){
+        int max = 1000;
+        for (RendererPoint point : pointQueue) {
+            int top = point.getHighest();
+            if (top > max) max = top;
+        }
+        return max;
     }
 
     private void renderText() {
@@ -76,13 +91,13 @@ public class PerformanceRenderer {
         float step = getTextStep();
 
         RendererPoint current = pointQueue.peek();
-        batch.setColor(updateColor);
+        font.setColor(updateColor);
         font.draw(batch, "update: " + current.engineUpdate + " us", x, y);
         y -= step;
-        batch.setColor(renderColor);
+        font.setColor(renderColor);
         font.draw(batch, "render: " + current.engineRender + " us", x, y);
         y -= step;
-        batch.setColor(eventColor);
+        font.setColor(eventColor);
         font.draw(batch, "event: " + current.events + " us", x, y);
 
     }
@@ -119,12 +134,8 @@ public class PerformanceRenderer {
     }
 
     private void renderGraphics() {
-        int max = 1000;
         Array<RendererPoint> queue = this.pointQueue;
-        for (RendererPoint point : queue) {
-            int top = point.getHighest();
-            if (top > max) max = top;
-        }
+        int max = calculateTopValue();
 
         int size = queue.size;
         int topValue = (int) (max * 1.1f);
