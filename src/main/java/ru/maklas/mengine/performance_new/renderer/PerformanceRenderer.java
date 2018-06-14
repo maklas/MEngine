@@ -139,7 +139,7 @@ public class PerformanceRenderer {
 
 
     private float getX(int pointId, int pointsSize){
-        return x + (width * (pointsSize - pointId) / (float) pointsSize);
+        return x + (width * (1 - ((pointsSize - pointId) / (float) pointsSize)));
     }
 
     private float getY(float value, float topValue){
