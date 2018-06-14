@@ -33,7 +33,7 @@ public class PerformanceRenderer {
     public Color renderColor = Color.BLUE;
     public Color eventColor  = Color.RED;
     public Color entityColor  = Color.YELLOW;
-    public Color netColor  = Color.LIGHT_GRAY;
+    public Color netColor  = new Color(0.2f, 0.2f, 0.2f, 0.2f);
 
     private int currentFrame = 0;
 
@@ -78,12 +78,6 @@ public class PerformanceRenderer {
         shapeRenderer.setColor(netColor);
         int top = calculateTopValue();
         int horLines = top / 1000;
-
-
-        for (int i = 1; i < points; i++) {
-            float x = getX(i);
-            shapeRenderer.line(x, y, x, y + height);
-        }
 
         for (int i = 1; i <= horLines; i++) {
             float y = getY(i * 1000, top);
@@ -144,7 +138,7 @@ public class PerformanceRenderer {
         for (EventData event : result.events) {
             microEvents += getMicro(event.internalTime, event.calls);
         }
-        point.events = microEvents;
+        point.events = (int) (microEvents / (float) result.totalFrames);
 
         pointQueue.add(point);
         if (pointQueue.size > points){
