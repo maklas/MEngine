@@ -1,6 +1,7 @@
 package ru.maklas.mengine.performance_new;
 
 import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.Pool;
 import ru.maklas.mengine.EntitySystem;
 import ru.maklas.mengine.RenderEntitySystem;
 import ru.maklas.mengine.performance_new.captures.EventCapture;
@@ -14,12 +15,20 @@ public class PerformanceAccumulator {
     private int currentFrameCounter = 0;
     private FrameData currentFrame;
     private EventAccumulator eventAccumulator = new EventAccumulator();
+    private Pool<EventCapture> eventCapturePool;
 
     public PerformanceAccumulator() {
         for (int i = 0; i < size; i++) {
             frameDatas[i] = new FrameData();
         }
         currentFrame = frameDatas[0];
+
+        eventCapturePool = new Pool<EventCapture>() {
+            @Override
+            protected EventCapture newObject() {
+                return new EventCapture();
+            }
+        };
     }
 
     long updateStartTime;
@@ -103,7 +112,7 @@ public class PerformanceAccumulator {
                 peek.interrupted = now;
             }
         }
-        EventCapture capture = new EventCapture();
+        EventCapture capture = eventCapturePool.obtain();
         capture.eventClass = eventClass;
         capture.entitySystem = currentSystem == null ? null : currentSystem.getClass();
         capture.started = now;
@@ -121,6 +130,7 @@ public class PerformanceAccumulator {
 
         long totalTime = now - last.started;
         eventAccumulator.saveEvent(last.eventClass, totalTime, last.wasInterrupted() ? totalTime - (last.resumed - last.interrupted) : totalTime);
+        eventCapturePool.free(last);
     }
 
     long findByIdStart;
