@@ -2,6 +2,7 @@ package ru.maklas.mengine.performance_new;
 
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Pool;
+import org.jetbrains.annotations.Nullable;
 import ru.maklas.mengine.EntitySystem;
 import ru.maklas.mengine.RenderEntitySystem;
 import ru.maklas.mengine.performance_new.captures.EventCapture;
@@ -31,7 +32,7 @@ public class PerformanceAccumulator {
         };
     }
 
-    long updateStartTime;
+    private long updateStartTime;
     public void updateStarted(){
         int currentFrameId = currentFrameCounter++;
         currentFrame = frameDatas[currentFrameId];
@@ -48,8 +49,8 @@ public class PerformanceAccumulator {
         currentFrame.engineUpdateTime = now - updateStartTime;
     }
 
-    long renderStarted;
-    Class<? extends RenderEntitySystem> renderClass;
+    private long renderStarted;
+    private Class<? extends RenderEntitySystem> renderClass;
     public void renderStarted(RenderEntitySystem system){
         renderClass = system.getClass();
         currentSystem = system;
@@ -63,9 +64,9 @@ public class PerformanceAccumulator {
         currentFrame.addSystemUpdate(renderClass, currentFrame.renderTime);
     }
 
-    EntitySystem currentSystem;
-    long systemStartTime;
-    long systemFinishTime;
+    @Nullable private EntitySystem currentSystem;
+    private long systemStartTime;
+    private long systemFinishTime;
     public void systemStarted(EntitySystem system){
         systemStartTime = System.nanoTime();
         currentSystem = system;
@@ -78,6 +79,7 @@ public class PerformanceAccumulator {
     /**
      * Only triggered if current updating system had something to execute later
      */
+    @SuppressWarnings("all")
     public void laterExecutionFinished(boolean runnablesExecuted){
 
         if (runnablesExecuted){
@@ -91,7 +93,7 @@ public class PerformanceAccumulator {
         currentSystem = null;
     }
 
-    long afterUpdateStart;
+    private long afterUpdateStart;
     public void afterUpdateStarted(){
         afterUpdateStart = System.nanoTime();
     }
@@ -100,7 +102,7 @@ public class PerformanceAccumulator {
         currentFrame.afterUpdateTime = System.nanoTime() - afterUpdateStart;
     }
 
-    Array<EventCapture> eventStack = new Array<EventCapture>();
+    private Array<EventCapture> eventStack = new Array<EventCapture>();
     public void eventDispatchStarted(Object event){
         long now = System.nanoTime();
         Class<?> eventClass = event.getClass();

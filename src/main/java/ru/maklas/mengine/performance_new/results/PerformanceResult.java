@@ -24,18 +24,18 @@ public class PerformanceResult {
 
     public static int EVENT_SORT_TYPE = TOTAL;
 
-    int totalFrames;
-    int entities;
-    EventAccumulator eventAccumulator;
-    NamedData engineUpdate;
-    NamedData engineRender;
-    NamedData engineTotal;
-    NamedData engineAfterUpdate;
-    NamedData entityAdd;
-    NamedData entityRemove;
-    FindByIdData findById;
-    Array<SystemData> systemDatas;
-    Array<EventData> events;
+    public int totalFrames;
+    public int entities;
+    public EventAccumulator eventAccumulator;
+    public NamedData engineUpdate;
+    public NamedData engineRender;
+    public NamedData engineTotal;
+    public NamedData engineAfterUpdate;
+    public NamedData entityAdd;
+    public NamedData entityRemove;
+    public FindByIdData findById;
+    public Array<SystemData> systemDatas;
+    public Array<EventData> events;
 
     public PerformanceResult(FrameData[] frames, EventAccumulator eventAccumulator, int entities) {
         totalFrames = frames.length;
