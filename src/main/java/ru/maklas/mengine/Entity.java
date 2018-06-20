@@ -175,6 +175,17 @@ public class Entity {
     }
 
 
+    public void set(float x, float y){
+        this.x = x;
+        this.y = y;
+    }
+
+    public void set(float x, float y, int z){
+        this.x = x;
+        this.y = y;
+        this.zOrder = z;
+    }
+
     //*****************//
     //* SUBSCRIPTIONS *//
     //*****************//

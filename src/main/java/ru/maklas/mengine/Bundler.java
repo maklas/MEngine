@@ -7,7 +7,7 @@ public class Bundler {
     private final ObjectMap<String, Object> stringMap = new ObjectMap<String, Object>();
     private final ObjectMap<Class, Object> classMap = new ObjectMap<Class, Object>();
 
-    Bundler() {
+    public Bundler() {
 
     }
 
