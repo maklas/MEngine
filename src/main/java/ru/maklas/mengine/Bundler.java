@@ -7,10 +7,6 @@ public class Bundler {
     private final ObjectMap<String, Object> stringMap = new ObjectMap<String, Object>();
     private final ObjectMap<Class, Object> classMap = new ObjectMap<Class, Object>();
 
-    public Bundler() {
-
-    }
-
     public <T> void set(String name, T o){
         stringMap.put(name, o);
         classMap.put(o.getClass(), o);

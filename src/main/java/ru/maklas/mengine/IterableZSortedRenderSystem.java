@@ -16,7 +16,7 @@ import java.util.Comparator;
  * <p>Use {@link #invalidate()} or {@link Engine#invalidateRenderZ()} to re-sort Entities on next render.</p>
  * </p>
  */
-public abstract class IterableZSortedRenderSystem<T extends IRenderComponent> extends RenderEntitySystem implements EntityListener {
+public abstract class IterableZSortedRenderSystem<T extends IRenderComponent> extends RenderEntitySystem{
 
     private final Class<T> componentClass;
     private final ComponentMapper<T> mapper;
@@ -28,23 +28,43 @@ public abstract class IterableZSortedRenderSystem<T extends IRenderComponent> ex
             return e1.zOrder - e2.zOrder;
         }
     };
+    private final boolean invalidateOnEntityAdd;
+    private final EntityListener listener;
 
-    public IterableZSortedRenderSystem(Class<T> componentClass) {
+    public IterableZSortedRenderSystem(Class<T> componentClass, boolean invalidateOnEntityAdd) {
         this.componentClass = componentClass;
         this.mapper = ComponentMapper.of(componentClass);
+        this.invalidateOnEntityAdd = invalidateOnEntityAdd;
+        listener = new EntityListener() {
+            @Override
+            public void entityAdded(Entity e) {
+                invalidate();
+            }
+
+            @Override
+            public void entityRemoved(Entity e) {
+
+            }
+        };
     }
 
     @Override
     public void onAddedToEngine(Engine engine) {
         super.onAddedToEngine(engine);
         entities = engine.entitiesFor(componentClass);
+        if (invalidateOnEntityAdd){
+            engine.addListener(listener);
+        }
     }
 
     @Override
-    public void onRemovedFromEngine(Engine e) {
-        super.onRemovedFromEngine(e);
+    public void onRemovedFromEngine(Engine engine) {
+        super.onRemovedFromEngine(engine);
         entities = null;
         sortedEntities.clear();
+        if (invalidateOnEntityAdd){
+            engine.removeListener(listener);
+        }
     }
 
     @Override
@@ -55,6 +75,7 @@ public abstract class IterableZSortedRenderSystem<T extends IRenderComponent> ex
 
         if (!isValid()){
             sort();
+            setValid();
         }
 
         renderStarted();
@@ -79,14 +100,4 @@ public abstract class IterableZSortedRenderSystem<T extends IRenderComponent> ex
     protected abstract void renderEntity(Entity entity, T rc);
 
     protected abstract void renderFinished();
-
-    @Override
-    public final void entityAdded(Entity e) {
-        invalidate();
-    }
-
-    @Override
-    public final void entityRemoved(Entity e) {
-        invalidate();
-    }
 }

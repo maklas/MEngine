@@ -2,6 +2,7 @@ package ru.maklas.mengine;
 
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Disposable;
+import com.badlogic.gdx.utils.ObjectMap;
 import com.badlogic.gdx.utils.Queue;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -12,6 +13,7 @@ import ru.maklas.mengine.utils.Listener;
 public class Engine implements Disposable {
 
     public static int TOTAL_COMPONENTS = 64;
+    public static final ObjectMap<Class<? extends EntitySystem>, Integer> systemOrderMap = new ObjectMap<Class<? extends EntitySystem>, Integer>();
 
     final Array<Entity> entities;
     private EntityFinder finder;

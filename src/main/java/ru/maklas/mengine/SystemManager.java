@@ -64,10 +64,16 @@ public class SystemManager {
     }
 
 
+    /**
+     * Do not edit!
+     */
     public final Array<SubscriptionSystem> getSystems() {
         return systems;
     }
 
+    /**
+     * Do not edit!
+     */
     public final Array<EntitySystem> getEntitySystems() {
         return entitySystems;
     }

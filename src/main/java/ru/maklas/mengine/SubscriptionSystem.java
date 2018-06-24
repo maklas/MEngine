@@ -1,18 +1,13 @@
 package ru.maklas.mengine;
 
 import com.badlogic.gdx.utils.Array;
+import ru.maklas.mengine.utils.ImmutableArray;
 import ru.maklas.mengine.utils.Listener;
 
 public class SubscriptionSystem {
 
     protected Engine engine;
     protected Array<Subscription> subscriptions;
-
-
-
-    public void onAddedToEngine(Engine engine){}
-
-    public void onRemovedFromEngine(Engine engine){}
 
 
     final void addToEngine(Engine engine) {
@@ -28,11 +23,30 @@ public class SubscriptionSystem {
         onRemovedFromEngine(oldEngine);
     }
 
+    public void onAddedToEngine(Engine engine){}
+
+    public void onRemovedFromEngine(Engine engine){}
+
 
     public final Engine getEngine() {
         return engine;
     }
 
+    protected final ImmutableArray<Entity> entitiesFor(Class<? extends Component> componentClass){
+        return engine.entitiesFor(componentClass);
+    }
+
+    /**
+     * Throws AssertionError if system is not currently in the same engine.
+     */
+    protected final void assertSystemAdded(Class <? extends SubscriptionSystem> system){
+        if (engine.getSystemManager().getSystem(system) == null)
+            throw new AssertionError();
+    }
+
+    /**
+     * Throws null pointer exception if system wasn't in engine during this call
+     */
     protected final void dispatch(Object event){
         engine.dispatch(event);
     }

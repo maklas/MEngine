@@ -13,7 +13,12 @@ public abstract class EntitySystem extends SubscriptionSystem {
     }
 
     public EntitySystem() {
-        this(0);
+        Integer priority = Engine.systemOrderMap.get(getClass());
+        if (priority == null){
+            this.priority = 0;
+        } else {
+            this.priority = priority;
+        }
     }
 
     public abstract void update(float dt);

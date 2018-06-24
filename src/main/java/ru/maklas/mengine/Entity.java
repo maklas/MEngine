@@ -20,7 +20,7 @@ public class Entity {
     /**
      * Id of the entity. Use it as you wish. MEngine's only interraction with it is only via {@link Engine#findById(int)}
      */
-    public int id = 0;
+    public int id;
     /**
      * X position for Entity
      */
@@ -53,7 +53,7 @@ public class Entity {
     Array<Component> componentArray = new Array<Component>(12);
 
     public Entity() {
-        this(-1, 0, 0, 0);
+        this(0, 0, 0, 0);
     }
 
     public Entity(int id) {
@@ -61,11 +61,20 @@ public class Entity {
     }
 
     public Entity(float x, float y, int zOrder) {
-        this(-1, x, y, zOrder);
+        this(0, x, y, zOrder);
     }
 
     public Entity(int id, float x, float y, int zOrder) {
         this.id = id;
+        this.x = x;
+        this.y = y;
+        this.zOrder = zOrder;
+        components = new Component[Engine.TOTAL_COMPONENTS];
+    }
+
+    public Entity(int id, int type, float x, float y, int zOrder) {
+        this.id = id;
+        this.type = type;
         this.x = x;
         this.y = y;
         this.zOrder = zOrder;
@@ -186,6 +195,14 @@ public class Entity {
         this.zOrder = z;
     }
 
+    public void set(int id, int type, float x, float y, int z){
+        this.id = id;
+        this.type = type;
+        this.x = x;
+        this.y = y;
+        this.zOrder = z;
+    }
+
     //*****************//
     //* SUBSCRIPTIONS *//
     //*****************//
@@ -296,6 +313,7 @@ public class Entity {
                 ", y=" + y +
                 ", angle=" + angle +
                 ", zOrder=" + zOrder +
+                ", inEngine=" + isInEngine() +
                 ", Components=" + componentArray.size +
                 '}';
     }

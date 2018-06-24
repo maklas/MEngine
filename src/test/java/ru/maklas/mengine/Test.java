@@ -80,7 +80,8 @@ public class Test extends EntitySystem {
 
     private static class RenderSystem extends IterableZSortedRenderSystem<IRenderComponent>{
         public RenderSystem() {
-            super(IRenderComponent.class);
+            super(IRenderComponent.class, false);
+            setAlwaysInvalidate(true);
         }
 
         @Override

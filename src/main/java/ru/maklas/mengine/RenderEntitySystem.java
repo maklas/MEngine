@@ -20,6 +20,10 @@ public abstract class RenderEntitySystem extends EntitySystem {
         this.valid = false;
     }
 
+    public final void setValid(){
+        this.valid = true;
+    }
+
     public final boolean isAlwaysInvalidate() {
         return alwaysInvalidate;
     }
