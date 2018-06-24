@@ -81,7 +81,7 @@ public class SystemManager {
     public final SubscriptionSystem[] getAll() {
 
         final int size = renderSystem == null ? systems.size : systems.size + 1;
-        SubscriptionSystem[] ret = new EntitySystem[size];
+        SubscriptionSystem[] ret = new SubscriptionSystem[size];
         for (int i = 0; i < systems.size; i++) {
             ret[i] = systems.get(i);
         }
