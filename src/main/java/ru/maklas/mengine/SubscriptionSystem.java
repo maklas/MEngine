@@ -52,8 +52,8 @@ public class SubscriptionSystem {
     }
 
     /**
-     * Подписывается на ивенты движка (Возможно только после того как система была добавлена в движок)
-     * Автоматически отписывается когда EntitySystem удаляется из движка
+     * Subscribes to engine events. (Can be possible only after this system was added to engine)
+     * Automatically unsubscribes when the system is removed from engine
      */
     protected final <T> void subscribe(Subscription<T> subscription){
         if (subscriptions == null){
@@ -64,8 +64,8 @@ public class SubscriptionSystem {
     }
 
     /**
-     * Подписывается на ивенты движка (Возможно только после того как система была добавлена в движок)
-     * Автоматически отписывается когда EntitySystem удаляется из движка
+     * Subscribes to engine events. (Can be possible only after this system was added to engine)
+     * Automatically unsubscribes when the system is removed from engine
      */
     protected final <T> Subscription<T> subscribe(Class<T> eventClass, Listener<T> listener){
         CompositSubscription<T> subscription = new CompositSubscription<T>(eventClass, listener);
