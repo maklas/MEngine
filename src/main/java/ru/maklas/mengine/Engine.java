@@ -138,7 +138,7 @@ public class Engine implements Disposable {
     /**
      * Adds new Entity system to engine. Will replace EntitySystem of the same class
      */
-    public void add(@NotNull EntitySystem system){
+    public void add(@NotNull SubscriptionSystem system){
         if (updating){
             afterUpdateQueue.addLast(new AddSystemOperation(system));
             return;
@@ -150,7 +150,7 @@ public class Engine implements Disposable {
     /**
      * Removes specified EntitySystem by class
      */
-    public void remove(@NotNull EntitySystem system){
+    public void remove(@NotNull SubscriptionSystem system){
         if (updating){
             afterUpdateQueue.addLast(new RemoveSystemOperation(system));
             return;
@@ -371,7 +371,7 @@ public class Engine implements Disposable {
         }
         updating = true;
 
-        Array<EntitySystem> systems = systemManager.getSystems();
+        Array<EntitySystem> systems = systemManager.getEntitySystems();
 
             for (EntitySystem system : systems) {
                 if (system.isEnabled()) {
@@ -417,8 +417,8 @@ public class Engine implements Disposable {
         }
 
         //Systems
-        final EntitySystem[] allSystems = systemManager.getAll();
-        for (EntitySystem system : allSystems) {
+        final SubscriptionSystem[] allSystems = systemManager.getAll();
+        for (SubscriptionSystem system : allSystems) {
             remove(system);
         }
 
@@ -432,9 +432,9 @@ public class Engine implements Disposable {
 
     private class AddSystemOperation implements Runnable{
 
-        EntitySystem system;
+        SubscriptionSystem system;
 
-        public AddSystemOperation(EntitySystem system) {
+        public AddSystemOperation(SubscriptionSystem system) {
             this.system = system;
         }
 
@@ -446,9 +446,9 @@ public class Engine implements Disposable {
 
     private class RemoveSystemOperation implements Runnable {
 
-        private final EntitySystem system;
+        private final SubscriptionSystem system;
 
-        public RemoveSystemOperation(EntitySystem system) {
+        public RemoveSystemOperation(SubscriptionSystem system) {
             this.system = system;
         }
 

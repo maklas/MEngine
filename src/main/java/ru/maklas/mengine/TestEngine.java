@@ -61,7 +61,7 @@ public class TestEngine extends Engine {
         }
         updating = true;
 
-        Array<EntitySystem> systems = systemManager.getSystems();
+        Array<EntitySystem> systems = systemManager.getEntitySystems();
         PerformanceAccumulator acc = this.accumulator;
         acc.updateStarted();
 

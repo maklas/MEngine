@@ -9,43 +9,49 @@ import java.util.Comparator;
 public class SystemManager {
 
     private SystemComparator systemComparator = new SystemComparator();
-    private Array<EntitySystem> systems = new Array<EntitySystem>(true, 16);
-    private ObjectMap<Class<?>, EntitySystem> systemsByClass = new ObjectMap<Class<?>, EntitySystem>();
+    private Array<SubscriptionSystem> systems = new Array<SubscriptionSystem>(true, 32);
+    private Array<EntitySystem> entitySystems = new Array<EntitySystem>(true, 32);
+    private ObjectMap<Class<?>, SubscriptionSystem> systemsByClass = new ObjectMap<Class<?>, SubscriptionSystem>();
     private RenderEntitySystem renderSystem;
 
     SystemManager() {
 
     }
 
-    boolean addSystem(EntitySystem system){
-        Class<? extends EntitySystem> systemType = system.getClass();
-        EntitySystem oldSytem = getSystem(systemType);
+    boolean addSystem(SubscriptionSystem system){
         if (system instanceof RenderEntitySystem){
             renderSystem = (RenderEntitySystem) system;
             return true;
         }
-        if (oldSytem != null) {
-            removeSystem(oldSytem);
+
+        Class<? extends SubscriptionSystem> systemType = system.getClass();
+        SubscriptionSystem oldSystem = getSystem(systemType);
+        if (oldSystem != null) {
+            removeSystem(oldSystem);
         }
 
         systems.add(system);
         systemsByClass.put(systemType, system);
-        systems.sort(systemComparator);
+        if (system instanceof EntitySystem) {
+            entitySystems.add((EntitySystem) system);
+            entitySystems.sort(systemComparator);
+        }
         return true;
     }
 
-    boolean removeSystem(EntitySystem system){
+    boolean removeSystem(SubscriptionSystem system){
         if (system == renderSystem){
             renderSystem = null;
-        } else if(systems.removeValue(system, true)) {
+        } else if (systems.removeValue(system, true)) {
             systemsByClass.remove(system.getClass());
+            if (system instanceof EntitySystem) entitySystems.removeValue((EntitySystem) system, true);
             return true;
         }
         return false;
     }
 
     @SuppressWarnings("unchecked")
-    public <T extends EntitySystem> T getSystem(Class<T> systemType) {
+    public <T extends SubscriptionSystem> T getSystem(Class<T> systemType) {
         if (renderSystem != null && systemType == renderSystem.getClass()){
             return (T) renderSystem;
         }
@@ -53,19 +59,23 @@ public class SystemManager {
     }
 
     @Nullable
-    public RenderEntitySystem getRenderSystem() {
+    public final RenderEntitySystem getRenderSystem() {
         return renderSystem;
     }
 
 
-    Array<EntitySystem> getSystems() {
+    public final Array<SubscriptionSystem> getSystems() {
         return systems;
     }
 
-    public EntitySystem[] getAll() {
+    public final Array<EntitySystem> getEntitySystems() {
+        return entitySystems;
+    }
+
+    public final SubscriptionSystem[] getAll() {
 
         final int size = renderSystem == null ? systems.size : systems.size + 1;
-        EntitySystem[] ret = new EntitySystem[size];
+        SubscriptionSystem[] ret = new EntitySystem[size];
         for (int i = 0; i < systems.size; i++) {
             ret[i] = systems.get(i);
         }
