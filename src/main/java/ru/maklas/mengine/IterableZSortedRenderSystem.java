@@ -32,6 +32,7 @@ public abstract class IterableZSortedRenderSystem<T extends IRenderComponent> ex
     private final EntityListener listener;
 
     public IterableZSortedRenderSystem(Class<T> componentClass, boolean invalidateOnEntityAdd) {
+        super();
         this.componentClass = componentClass;
         this.mapper = ComponentMapper.of(componentClass);
         this.invalidateOnEntityAdd = invalidateOnEntityAdd;

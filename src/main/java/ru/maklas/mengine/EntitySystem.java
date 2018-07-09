@@ -1,5 +1,7 @@
 package ru.maklas.mengine;
 
+import com.badlogic.gdx.utils.ObjectMap;
+
 /**
  * System that iterates on Entities and their components each frame and mutates their state.
  */
@@ -13,12 +15,7 @@ public abstract class EntitySystem extends SubscriptionSystem {
     }
 
     public EntitySystem() {
-        Integer priority = Engine.systemOrderMap.get(getClass());
-        if (priority == null){
-            this.priority = 0;
-        } else {
-            this.priority = priority;
-        }
+        priority = getPriorityFromMap(getClass());
     }
 
     public abstract void update(float dt);
@@ -29,6 +26,24 @@ public abstract class EntitySystem extends SubscriptionSystem {
 
     public final void setEnabled(boolean enabled) {
         this.enabled = enabled;
+    }
+
+
+
+    private static <K extends Class<? extends EntitySystem>> int getPriorityFromMap(K key){
+        ObjectMap<Class<? extends EntitySystem>, Integer> map = Engine.systemOrderMap;
+        Integer v = map.get(key);
+        if (v != null) return v;
+
+        try {
+            Class superClass = key.getSuperclass();
+            while (superClass != null && !superClass.equals(SubscriptionSystem.class)){
+                Integer superClassValue = map.get(superClass);
+                if (superClassValue != null) return superClassValue;
+                superClass = superClass.getSuperclass();
+            }
+        } catch (Exception ignored) {}
+        return 0;
     }
 
 }
