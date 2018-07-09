@@ -7,20 +7,21 @@ import com.badlogic.gdx.utils.ObjectMap;
  */
 public class ComponentMapper<T extends Component> {
 
-    static int counter;
+    private static ObjectMap<Class<? extends Component>, ComponentMapper> assignedComponentTypes = new ObjectMap<Class<? extends Component>, ComponentMapper>();
+    private static int counter;
+
     final int id;
+    final Class<T> clazz;
 
-
-    public ComponentMapper() {
+    ComponentMapper(Class<T> clazz) {
+        this.clazz = clazz;
         this.id = counter++;
     }
-
-    private static ObjectMap<Class<? extends Component>, ComponentMapper> assignedComponentTypes = new ObjectMap<Class<? extends Component>, ComponentMapper>();
 
     public static <C extends Component> ComponentMapper<C> of(Class<C> cClass){
         ComponentMapper<C> componentMapper = assignedComponentTypes.get(cClass);
         if (componentMapper == null){
-            componentMapper = new ComponentMapper<C>();
+            componentMapper = new ComponentMapper<C>(cClass);
             assignedComponentTypes.put(cClass, componentMapper);
         }
         return componentMapper;
@@ -33,7 +34,5 @@ public class ComponentMapper<T extends Component> {
     public T get(Entity entity){
         return entity.get(this);
     }
-
-
 
 }

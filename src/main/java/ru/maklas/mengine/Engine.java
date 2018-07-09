@@ -353,8 +353,8 @@ public class Engine implements Disposable {
      * Calls {@link RenderEntitySystem#invalidate()} on RenderSystem if present
      */
     public void invalidateRenderZ(){
-        RenderEntitySystem renderSystem = systemManager.getRenderSystem();
-        if (renderSystem != null){
+        Array<RenderEntitySystem> renderSystems = systemManager.getRenderSystems();
+        for (RenderEntitySystem renderSystem : renderSystems) {
             renderSystem.invalidate();
         }
     }
@@ -392,9 +392,10 @@ public class Engine implements Disposable {
      * Calls {@link RenderEntitySystem#render()} if System is present
      */
     public void render() {
-        RenderEntitySystem renderSystem = systemManager.getRenderSystem();
-        if (renderSystem != null && renderSystem.isEnabled()){
-            renderSystem.render();
+        for (RenderEntitySystem rs : systemManager.getRenderSystems()) {
+            if (rs.isEnabled()){
+                rs.render();
+            }
         }
     }
 

@@ -85,12 +85,13 @@ public class TestEngine extends Engine {
 
     @Override
     public void render() {
-
-        RenderEntitySystem renderSystem = systemManager.getRenderSystem();
-        if (renderSystem != null && renderSystem.isEnabled()){
-            accumulator.renderStarted(renderSystem);
-            renderSystem.render();
-            accumulator.renderFinished();
+        Array<RenderEntitySystem> renderSystems = systemManager.getRenderSystems();
+        for (RenderEntitySystem rs : renderSystems) {
+            if (rs.isEnabled()){
+                accumulator.renderStarted(rs);
+                rs.render();
+                accumulator.renderFinished();
+            }
         }
     }
 
