@@ -10,7 +10,7 @@ Pros:
 * Faster. Adding, removing entities is faster since there is no need to triverse all Families. This feature is not found to be useful, so sacrifised in favor of performance.
 PositionComponents are not needed if you're developing 2d game.
 x, y, angle - floats included in Entity as public fields.
-zOrder - integer, specifying layer of Entity among others.
+layer - integer, specifying layer of Entity among others.
 id - just a number for Entity to be searched.
 type - integer. Can be used as mask for different purposes or other fast-identifying integer. Usual purpose - replace for TypeComponent.
 All Entities hold non-dynamical Component array. To make sure you don't create extremely high array for each Entity, set Engine.TOTAL_COMPONENTS to the total Components classes you have in project. This might decrease memory usage a little.

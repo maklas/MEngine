@@ -8,12 +8,12 @@ public abstract class UpdatableEntity extends Entity{
      */
     public abstract void update(float dt);
 
-    public UpdatableEntity(float x, float y, int zOrder) {
-        super(x, y, zOrder);
+    public UpdatableEntity(float x, float y, int layer) {
+        super(x, y, layer);
     }
 
-    public UpdatableEntity(int id, float x, float y, int zOrder) {
-        super(id, x, y, zOrder);
+    public UpdatableEntity(int id, float x, float y, int layer) {
+        super(id, x, y, layer);
     }
 
     public UpdatableEntity(int id) {

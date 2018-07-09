@@ -21,11 +21,11 @@ public abstract class IterableZSortedRenderSystem<T extends IRenderComponent> ex
     private final Class<T> componentClass;
     private final ComponentMapper<T> mapper;
     private ImmutableArray<Entity> entities;
-    private final Array<Entity> sortedEntities = new Array<Entity>();
-    private static final Comparator<Entity> zOrderComparator = new Comparator<Entity>() {
+    private final Array<Entity> sortedEntities = new Array<Entity>(true, 64);
+    private static final Comparator<Entity> layerComparator = new Comparator<Entity>() {
         @Override
         public int compare(Entity e1, Entity e2) {
-            return e1.zOrder - e2.zOrder;
+            return e1.layer - e2.layer;
         }
     };
     private final boolean invalidateOnEntityAdd;
@@ -43,7 +43,7 @@ public abstract class IterableZSortedRenderSystem<T extends IRenderComponent> ex
 
             @Override
             public void entityRemoved(Entity e) {
-
+                sortedEntities.removeValue(e, true);
             }
         };
     }
@@ -92,7 +92,7 @@ public abstract class IterableZSortedRenderSystem<T extends IRenderComponent> ex
         int size = entities.size();
         sortedEntities.setSize(size);
         System.arraycopy(entities.items(), 0, sortedEntities.items, 0, size);
-        Sort.instance().sort(sortedEntities.items, zOrderComparator,  0, size);
+        Sort.instance().sort(sortedEntities.items, layerComparator,  0, size);
     }
 
     protected abstract void renderStarted();

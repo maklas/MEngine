@@ -34,10 +34,10 @@ public class Entity {
      */
     private float angle;
     /**
-     * Z order for the Entity. Z ordinate or 'layer' if you want. Depicts current Entity position in Z axis.
+     * Z order for the Entity. Depicts current Entity position in Z axis.
      * {@link IterableZSortedRenderSystem} uses this parameter to render Entities in order.
      */
-    public int zOrder;
+    public int layer;
     /**
      * User-int. Can be used as a mask or for fast Entity classification.
      * During game development it almost always ends up with having to add EntityTypeComponent
@@ -60,24 +60,24 @@ public class Entity {
         this(id, 0, 0, 0);
     }
 
-    public Entity(float x, float y, int zOrder) {
-        this(0, x, y, zOrder);
+    public Entity(float x, float y, int layer) {
+        this(0, x, y, layer);
     }
 
-    public Entity(int id, float x, float y, int zOrder) {
+    public Entity(int id, float x, float y, int layer) {
         this.id = id;
         this.x = x;
         this.y = y;
-        this.zOrder = zOrder;
+        this.layer = layer;
         components = new Component[Engine.TOTAL_COMPONENTS];
     }
 
-    public Entity(int id, int type, float x, float y, int zOrder) {
+    public Entity(int id, int type, float x, float y, int layer) {
         this.id = id;
         this.type = type;
         this.x = x;
         this.y = y;
-        this.zOrder = zOrder;
+        this.layer = layer;
         components = new Component[Engine.TOTAL_COMPONENTS];
     }
 
@@ -192,7 +192,7 @@ public class Entity {
     public void set(float x, float y, int z){
         this.x = x;
         this.y = y;
-        this.zOrder = z;
+        this.layer = z;
     }
 
     public void set(int id, int type, float x, float y, int z){
@@ -200,7 +200,7 @@ public class Entity {
         this.type = type;
         this.x = x;
         this.y = y;
-        this.zOrder = z;
+        this.layer = z;
     }
 
     //*****************//
@@ -312,7 +312,7 @@ public class Entity {
                 ", x=" + x +
                 ", y=" + y +
                 ", angle=" + angle +
-                ", zOrder=" + zOrder +
+                ", layer=" + layer +
                 ", inEngine=" + isInEngine() +
                 ", Components=" + componentArray.size +
                 '}';
@@ -328,7 +328,7 @@ public class Entity {
                 ", x=" + x +
                 ", y=" + y +
                 ", angle=" + angle +
-                ", zOrder=" + zOrder +
+                ", layer=" + layer +
                 ", inEngine=" + isInEngine() +
                 ", Components=" + componentArray.toString() +
                 '}';
