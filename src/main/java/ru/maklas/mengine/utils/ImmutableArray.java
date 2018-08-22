@@ -87,7 +87,7 @@ public class ImmutableArray<T> implements Iterable<T> {
         return iterable.iterator();
     }
 
-    public Array<T> convert() {
+    public Array<T> cpy() {
         return new Array<T>(array);
     }
 }

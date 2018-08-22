@@ -7,7 +7,7 @@ import ru.maklas.mengine.utils.Listener;
 public class SubscriptionSystem {
 
     protected Engine engine;
-    protected Array<Subscription> subscriptions;
+    Array<Subscription> subscriptions;
 
 
     final void addToEngine(Engine engine) {
