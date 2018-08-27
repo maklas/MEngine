@@ -79,6 +79,20 @@ public class Engine implements Disposable {
         return this;
     }
 
+    public Engine addAll(Entity[] entities){
+        for (Entity entity : entities) {
+            add(entity);
+        }
+        return this;
+    }
+
+    public Engine addAll(Array<? extends Entity> entities){
+        for (Entity entity : entities) {
+            add(entity);
+        }
+        return this;
+    }
+
     /**
      * Adds Entity right away if not updating engine.
      * If engine is currently updating, Entity will wait for current updating system to finish it's update
