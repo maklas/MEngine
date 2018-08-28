@@ -26,6 +26,19 @@ public class Bundler {
         return (T) classMap.get(clazz);
     }
 
+    public <T> T getAssert(String s){
+        T o = get(s);
+        if (o == null) throw new RuntimeException(s + " is required to be in Bundler");
+        return o;
+    }
+
+    public <T> T getAssert(Class<T> clazz){
+        T o = get(clazz);
+        if (o == null) throw new RuntimeException(clazz.getSimpleName() + " is required to be in Bundler");
+        return o;
+    }
+
+
     public boolean remove(String s){
         Object o = stringMap.remove(s);
         if (o != null){
