@@ -16,6 +16,14 @@ public class Bundler {
         this.classMap.put(o.getClass(), o);
     }
 
+    public <T> void set(BundlerKey<T> key, T o){
+        stringMap.put(key.key, o);
+    }
+
+    public <T> T get(BundlerKey<T> key){
+        return (T) stringMap.get(key.key);
+    }
+
     @SuppressWarnings("unchecked")
     public <T> T get(String s){
         return (T) stringMap.get(s);
@@ -35,6 +43,12 @@ public class Bundler {
     public <T> T getAssert(Class<T> clazz){
         T o = get(clazz);
         if (o == null) throw new RuntimeException(clazz.getSimpleName() + " is required to be in Bundler");
+        return o;
+    }
+
+    public <T> T getAssert(BundlerKey<T> key){
+        T o = get(key);
+        if (o == null) throw new RuntimeException(key + " is required to be in Bundler");
         return o;
     }
 
