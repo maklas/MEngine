@@ -12,7 +12,7 @@ public class BundlerKey<T> {
         this.clazz = clazz;
     }
 
-    public static <T> BundlerKey of(@NotNull String key, @NotNull Class<T> type){
+    public static <T> BundlerKey<T> of(@NotNull String key, @NotNull Class<T> type){
         return new BundlerKey<T>(key, type);
     }
 
