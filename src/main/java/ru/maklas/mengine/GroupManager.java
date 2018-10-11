@@ -1,7 +1,7 @@
 package ru.maklas.mengine;
 
 import com.badlogic.gdx.utils.Array;
-import ru.maklas.mengine.utils.ImmutableArray;
+import com.badlogic.gdx.utils.ImmutableArray;
 
 public class GroupManager {
 

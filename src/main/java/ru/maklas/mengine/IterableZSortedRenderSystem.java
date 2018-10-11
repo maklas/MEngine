@@ -1,9 +1,9 @@
 package ru.maklas.mengine;
 
 import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.ImmutableArray;
 import com.badlogic.gdx.utils.Sort;
 import ru.maklas.mengine.components.IRenderComponent;
-import ru.maklas.mengine.utils.ImmutableArray;
 
 import java.util.Comparator;
 
