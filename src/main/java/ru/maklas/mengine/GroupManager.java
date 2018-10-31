@@ -6,7 +6,7 @@ import com.badlogic.gdx.utils.ImmutableArray;
 public class GroupManager {
 
     private final Engine engine;
-    private Group[] groups = new Group[Engine.TOTAL_COMPONENTS];
+    private Group[] groups = new Group[Engine.INITIAL_COMPONENTS];
 
     public GroupManager(Engine engine) {
         this.engine = engine;
@@ -14,6 +14,7 @@ public class GroupManager {
 
 
     void componentAdded(Entity target, ComponentMapper<? extends Component> mapper){
+        assertGroupSize(mapper.id);
         Group group = groups[mapper.id];
         if (group != null) {
             group.add(target);
@@ -21,6 +22,7 @@ public class GroupManager {
     }
 
     void componentRemoved(Entity target, ComponentMapper<? extends Component> mapper){
+        if (groups.length <= mapper.id) return;
         Group group = groups[mapper.id];
         if (group != null){
             group.remove(target);
@@ -42,6 +44,7 @@ public class GroupManager {
     }
 
     public Group of(ComponentMapper mapper){
+        assertGroupSize(mapper.id);
         Group group = groups[mapper.id];
         if (group == null){
             group = new Group();
@@ -59,6 +62,14 @@ public class GroupManager {
 
         }
         return group;
+    }
+
+    private void assertGroupSize(int size){
+        if (groups.length <= size){
+            Group[] newGroups = new Group[size + 1];
+            System.arraycopy(groups, 0, newGroups, 0, groups.length);
+            groups = newGroups;
+        }
     }
 
     public Group of(Class<? extends Component> clazz){

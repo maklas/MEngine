@@ -8,6 +8,7 @@ public class Test extends EntitySystem {
     public static final int updateFrames = 1000;
 
     public static void main(String[] args) {
+        Engine.INITIAL_COMPONENTS = 0;
         final TestEngine engine = new TestEngine();
 
         engine.add(new UpdatableEntitySystem());

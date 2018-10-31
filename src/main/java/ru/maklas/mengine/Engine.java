@@ -8,7 +8,7 @@ import ru.maklas.mengine.utils.Listener;
 
 public class Engine implements Disposable {
 
-    public static int TOTAL_COMPONENTS = 64;
+    public static int INITIAL_COMPONENTS = 12;
     public static final ObjectMap<Class<? extends EntitySystem>, Integer> systemOrderMap = new ObjectMap<Class<? extends EntitySystem>, Integer>();
 
     final Array<Entity> entities;

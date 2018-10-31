@@ -46,11 +46,11 @@ public class Entity {
     public int type = -1;
 
 
-    public final Signal<EntityComponentEvent> componentSignal = new Signal<EntityComponentEvent>(2);
-    private final Component[] components;
+    public final Signal<EntityComponentEvent> componentSignal = new Signal<EntityComponentEvent>(1);
+    private Component[] components;
     private Array<Subscription> subscriptions;
     Engine engine;
-    Array<Component> componentArray = new Array<Component>(12);
+    Array<Component> componentArray = new Array<Component>(5);
 
     public Entity() {
         this(0, 0, 0, 0);
@@ -69,7 +69,7 @@ public class Entity {
         this.x = x;
         this.y = y;
         this.layer = layer;
-        components = new Component[Engine.TOTAL_COMPONENTS];
+        components = new Component[Engine.INITIAL_COMPONENTS];
     }
 
     public Entity(int id, int type, float x, float y, int layer) {
@@ -78,7 +78,7 @@ public class Entity {
         this.x = x;
         this.y = y;
         this.layer = layer;
-        components = new Component[Engine.TOTAL_COMPONENTS];
+        components = new Component[Engine.INITIAL_COMPONENTS];
     }
 
 
@@ -106,6 +106,12 @@ public class Entity {
      * Replaces if this Entity already had component of this class.
      */
     public final <T extends Component> Entity add(T component, ComponentMapper<T> mapper){
+        Component[] components = this.components;
+        if (components.length <= mapper.id){
+            Component[] newComponents = new Component[mapper.id + 1];
+            System.arraycopy(components, 0, newComponents, 0, components.length);
+            this.components = components = newComponents;
+        }
         Component oldComponent = components[mapper.id];
         if (oldComponent != null){
             componentArray.removeValue(oldComponent, true);
@@ -132,6 +138,7 @@ public class Entity {
      * Removes Component of specified ComponentMapper from this entity
      */
     public final <T extends Component> T remove(ComponentMapper<T> mapper){
+        if (components.length <= mapper.id) return null;
         Component component = components[mapper.id];
         components[mapper.id] = null;
         if (component != null) {
@@ -148,6 +155,7 @@ public class Entity {
      */
     @SuppressWarnings("all")
     public final <T extends Component> T get(ComponentMapper<T> mapper){
+        if (components.length <= mapper.id) return null;
         return (T) components[mapper.id];
     }
 
@@ -158,11 +166,11 @@ public class Entity {
 
     /**
      * Gets component of specified class from this Entity. Since uses Map for retrieval, complexity for the worst case is O(log(n).
-     * Use {@link #get(ComponentMapper)} for ligning O(1) speed.
+     * Use {@link #get(ComponentMapper)} for lightning O(1) speed.
      */
     @SuppressWarnings("all")
     public final <T extends Component> T get(Class<T> cClass){
-        return (T) components[ComponentMapper.of(cClass).id];
+        return (T) get(ComponentMapper.of(cClass));
     }
 
 
