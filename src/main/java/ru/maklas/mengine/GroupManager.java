@@ -13,17 +13,17 @@ public class GroupManager {
     }
 
 
-    void componentAdded(Entity target, ComponentMapper<? extends Component> mapper){
-        assertGroupSize(mapper.id);
-        Group group = groups[mapper.id];
+    void componentAdded(Entity target, int mapperId){
+        assertGroupSize(mapperId);
+        Group group = groups[mapperId];
         if (group != null) {
             group.add(target);
         }
     }
 
-    void componentRemoved(Entity target, ComponentMapper<? extends Component> mapper){
-        if (groups.length <= mapper.id) return;
-        Group group = groups[mapper.id];
+    void componentRemoved(Entity target, int mapperId){
+        if (groups.length <= mapperId) return;
+        Group group = groups[mapperId];
         if (group != null){
             group.remove(target);
         }
@@ -32,15 +32,19 @@ public class GroupManager {
     void entityAdded(Entity entity){
         Array<Component> componentArray = entity.componentArray;
         for (Component component : componentArray) {
-            componentAdded(entity, ComponentMapper.of(component.getClass()));
+            componentAdded(entity, ComponentMapper.of(component.getClass()).id);
         }
     }
 
     void entityRemoved(Entity entity){
         Array<Component> componentArray = entity.componentArray;
         for (Component component : componentArray) {
-            componentRemoved(entity, ComponentMapper.of(component.getClass()));
+            componentRemoved(entity, ComponentMapper.of(component.getClass()).id);
         }
+    }
+
+    public Group of(Class<? extends Component> clazz){
+        return of(ComponentMapper.of(clazz));
     }
 
     public Group of(ComponentMapper mapper){
@@ -55,7 +59,7 @@ public class GroupManager {
             for (int i = 0; i < size; i++) {
                 Component component = entities.get(i).get(mapper);
                 if (component != null){
-                    componentAdded(entities.get(i), mapper);
+                    componentAdded(entities.get(i), mapper.id);
                 }
             }
 
@@ -70,10 +74,6 @@ public class GroupManager {
             System.arraycopy(groups, 0, newGroups, 0, groups.length);
             groups = newGroups;
         }
-    }
-
-    public Group of(Class<? extends Component> clazz){
-        return of(ComponentMapper.of(clazz));
     }
 
     public void clearAll() {

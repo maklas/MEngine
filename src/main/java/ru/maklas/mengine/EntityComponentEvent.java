@@ -4,7 +4,7 @@ final class EntityComponentEvent {
 
     Entity entity;
     Component component;
-    ComponentMapper mapper;
+    int mapperId;
     boolean added;
 
     public Entity getEntity() {
@@ -24,10 +24,10 @@ final class EntityComponentEvent {
     }
 
 
-    EntityComponentEvent setUp(Entity entity, Component component, ComponentMapper mapper, boolean added) {
+    EntityComponentEvent setUp(Entity entity, Component component, int mapperId, boolean added) {
         this.entity = entity;
         this.component = component;
-        this.mapper = mapper;
+        this.mapperId = mapperId;
         this.added = added;
         return this;
     }

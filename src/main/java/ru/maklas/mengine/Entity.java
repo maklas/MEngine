@@ -107,21 +107,22 @@ public class Entity {
      */
     public final <T extends Component> Entity add(T component, ComponentMapper<T> mapper){
         Component[] components = this.components;
-        if (components.length <= mapper.id){
-            Component[] newComponents = new Component[mapper.id + 1];
+        int mapperId = mapper.id;
+        if (components.length <= mapperId){
+            Component[] newComponents = new Component[mapperId + 1];
             System.arraycopy(components, 0, newComponents, 0, components.length);
             this.components = components = newComponents;
         }
-        Component oldComponent = components[mapper.id];
+        Component oldComponent = components[mapperId];
         if (oldComponent != null){
             componentArray.removeValue(oldComponent, true);
-            EntityComponentEvent e = eventPool.obtain().setUp(this, oldComponent, mapper, false);
+            EntityComponentEvent e = eventPool.obtain().setUp(this, oldComponent, mapperId, false);
             componentSignal.dispatch(e);
             eventPool.free(e);
         }
-        components[mapper.id] = component;
+        components[mapperId] = component;
         componentArray.add(component);
-        EntityComponentEvent e = eventPool.obtain().setUp(this, component, mapper, true);
+        EntityComponentEvent e = eventPool.obtain().setUp(this, component, mapperId, true);
         componentSignal.dispatch(e);
         eventPool.free(e);
         return this;
@@ -138,12 +139,13 @@ public class Entity {
      * Removes Component of specified ComponentMapper from this entity
      */
     public final <T extends Component> T remove(ComponentMapper<T> mapper){
-        if (components.length <= mapper.id) return null;
-        Component component = components[mapper.id];
-        components[mapper.id] = null;
+        int mapperId = mapper.id;
+        if (components.length <= mapperId) return null;
+        Component component = components[mapperId];
+        components[mapperId] = null;
         if (component != null) {
             componentArray.removeValue(component, true);
-            EntityComponentEvent e = eventPool.obtain().setUp(this, component, mapper, false);
+            EntityComponentEvent e = eventPool.obtain().setUp(this, component, mapperId, false);
             componentSignal.dispatch(e);
             eventPool.free(e);
         }

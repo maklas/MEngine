@@ -42,9 +42,9 @@ public class Engine implements Disposable {
             @Override
             public void receive(EntityComponentEvent event) {
                 if (event.added){
-                    groupManager.componentAdded(event.entity, event.mapper);
+                    groupManager.componentAdded(event.entity, event.mapperId);
                 } else {
-                    groupManager.componentRemoved(event.entity, event.mapper);
+                    groupManager.componentRemoved(event.entity, event.mapperId);
                 }
             }
         };
@@ -221,6 +221,14 @@ public class Engine implements Disposable {
      */
     public ImmutableArray<Entity> entitiesFor(Class<? extends Component> componentClass) {
         return groupManager.of(componentClass).immutables;
+    }
+
+    /**
+     * Uses GroupManager to receive Entity Array with specific component always present.
+     * Returns the same instance for the same component
+     */
+    public ImmutableArray<Entity> entitiesFor(ComponentMapper mapper) {
+        return groupManager.of(mapper).immutables;
     }
 
     /**
