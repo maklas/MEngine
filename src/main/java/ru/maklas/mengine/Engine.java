@@ -42,9 +42,9 @@ public class Engine implements Disposable {
             @Override
             public void receive(EntityComponentEvent event) {
                 if (event.added){
-                    groupManager.componentAdded(event.entity, event.mapper);
+                    groupManager.componentAdded(event.entity, event.mapperId);
                 } else {
-                    groupManager.componentRemoved(event.entity, event.mapper);
+                    groupManager.componentRemoved(event.entity, event.mapperId);
                 }
             }
         };

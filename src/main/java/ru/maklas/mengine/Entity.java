@@ -106,16 +106,17 @@ public class Entity {
      * Replaces if this Entity already had component of this class.
      */
     public final <T extends Component> Entity add(T component, ComponentMapper<T> mapper){
-        Component oldComponent = components[mapper.id];
+        int mapperId = mapper.id;
+        Component oldComponent = components[mapperId];
         if (oldComponent != null){
             componentArray.removeValue(oldComponent, true);
-            EntityComponentEvent e = eventPool.obtain().setUp(this, oldComponent, mapper, false);
+            EntityComponentEvent e = eventPool.obtain().setUp(this, oldComponent, mapperId, false);
             componentSignal.dispatch(e);
             eventPool.free(e);
         }
-        components[mapper.id] = component;
+        components[mapperId] = component;
         componentArray.add(component);
-        EntityComponentEvent e = eventPool.obtain().setUp(this, component, mapper, true);
+        EntityComponentEvent e = eventPool.obtain().setUp(this, component, mapperId, true);
         componentSignal.dispatch(e);
         eventPool.free(e);
         return this;
@@ -132,11 +133,12 @@ public class Entity {
      * Removes Component of specified ComponentMapper from this entity
      */
     public final <T extends Component> T remove(ComponentMapper<T> mapper){
-        Component component = components[mapper.id];
-        components[mapper.id] = null;
+        int mapperId = mapper.id;
+        Component component = components[mapperId];
+        components[mapperId] = null;
         if (component != null) {
             componentArray.removeValue(component, true);
-            EntityComponentEvent e = eventPool.obtain().setUp(this, component, mapper, false);
+            EntityComponentEvent e = eventPool.obtain().setUp(this, component, mapperId, false);
             componentSignal.dispatch(e);
             eventPool.free(e);
         }
