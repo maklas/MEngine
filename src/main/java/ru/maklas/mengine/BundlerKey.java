@@ -5,19 +5,17 @@ import org.jetbrains.annotations.NotNull;
 public class BundlerKey<T> {
 
     String key;
-    Class<T> clazz;
 
-    private BundlerKey(String key, Class<T> clazz) {
+    private BundlerKey(String key) {
         this.key = key;
-        this.clazz = clazz;
     }
 
-    public static <T> BundlerKey<T> of(@NotNull String key, @NotNull Class<T> type){
-        return new BundlerKey<T>(key, type);
+    public static <T> BundlerKey<T> of(@NotNull String key){
+        return new BundlerKey<T>(key);
     }
 
     @Override
     public String toString() {
-        return "BundlerKey{" + "key='" + key + '\'' + ", clazz=" + clazz.getSimpleName() + '}';
+        return "BundlerKey{" + "key='" + key + '\'' + ", clazz=" + '}';
     }
 }
