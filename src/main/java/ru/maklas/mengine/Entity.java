@@ -48,21 +48,21 @@ public class Entity {
 
 
     public final Signal<EntityComponentEvent> componentSignal = new Signal<EntityComponentEvent>(2);
-    private final Component[] components;
+    final Component[] components = new Component[Engine.TOTAL_COMPONENTS];
     private Array<Subscription> subscriptions;
     Engine engine;
     Array<Component> componentArray = new Array<Component>(12);
 
-    public Entity() {
-        this(0, 0, 0, 0);
-    }
+    public Entity() {}
 
     public Entity(int id) {
-        this(id, 0, 0, 0);
+        this.id = id;
     }
 
     public Entity(float x, float y, int layer) {
-        this(0, x, y, layer);
+        this.x = x;
+        this.y = y;
+        this.layer = layer;
     }
 
     public Entity(int id, float x, float y, int layer) {
@@ -70,7 +70,6 @@ public class Entity {
         this.x = x;
         this.y = y;
         this.layer = layer;
-        components = new Component[Engine.TOTAL_COMPONENTS];
     }
 
     public Entity(int id, int type, float x, float y, int layer) {
@@ -79,12 +78,9 @@ public class Entity {
         this.x = x;
         this.y = y;
         this.layer = layer;
-        components = new Component[Engine.TOTAL_COMPONENTS];
     }
 
-
     // COMPONENT MANIPULATION
-
 
     /**
      * Never remove from this array
@@ -267,7 +263,6 @@ public class Entity {
 
     /**
      * Check if this entity is inside of Engine
-     * @return
      */
     public final boolean isInEngine(){
         return engine != null;
