@@ -7,9 +7,10 @@ import com.badlogic.gdx.utils.IntMap;
  */
 public class MappingEntityFinder implements EntityFinder, EntityListener {
 
-    IntMap<Entity> map = new IntMap<Entity>();
+    private IntMap<Entity> map = new IntMap<Entity>();
 
-    public MappingEntityFinder(Engine engine) {
+    @Override
+    public void onAddedToEngine(Engine engine) {
         engine.addListener(this);
     }
 

@@ -9,9 +9,13 @@ public class FastEntityFinder implements EntityFinder, EntityListener {
     private final Entity[] array;
     private final EntityFinder defaultFinder;
 
-    public FastEntityFinder(Engine engine, int size, EntityFinder defaultFinder) {
+    public FastEntityFinder(int size, EntityFinder defaultFinder) {
         this.defaultFinder = defaultFinder;
         array = new Entity[size];
+    }
+
+    @Override
+    public void onAddedToEngine(Engine engine) {
         engine.addListener(this);
     }
 

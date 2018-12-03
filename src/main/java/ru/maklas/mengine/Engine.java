@@ -31,7 +31,7 @@ public class Engine implements Disposable {
      */
     public Engine() {
         entities = new Array<Entity>(100);
-        finder = new DefaultEntityFinder(this);
+        finder = new DefaultEntityFinder();
         updatableEntities = new Array<UpdatableEntity>();
         immutableEntities = new ImmutableArray<Entity>(entities);
         systemManager = new SystemManager();
@@ -48,6 +48,8 @@ public class Engine implements Disposable {
                 }
             }
         };
+
+        finder.onAddedToEngine(this);
     }
 
     //*********************//
@@ -213,6 +215,7 @@ public class Engine implements Disposable {
 
     public void setFinder(EntityFinder finder) {
         this.finder = finder;
+        finder.onAddedToEngine(this);
     }
 
     /**
