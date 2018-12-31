@@ -436,7 +436,7 @@ public class PerformanceResult {
     }
 
     /**
-     * Процент от времени кадра (Если учесть FPS = 60)
+     * Percent of frame time (Considering FPS = 60)
      */
     private String framePercent(long nano){
         double frameTimeNano = 1.6666666666666666E7;

@@ -11,9 +11,9 @@ import ru.maklas.mengine.performance_new.captures.SystemCapture;
 
 public class FrameData implements Pool.Poolable {
 
-    public long engineUpdateTime; //Всё время на апдейт движка
+    public long engineUpdateTime; //Engine.update() time
     public long afterUpdateTime;
-    public long engineRenderTime; //суммарное время на рендер движка
+    public long engineRenderTime; //Engine.render() time
     public Array<SystemCapture>   systems = new Array<SystemCapture>();
     public Array<EventCapture>    events = new Array<EventCapture>();
     public Array<FindByIDCapture> finds = new Array<FindByIDCapture>();

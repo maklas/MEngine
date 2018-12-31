@@ -19,12 +19,12 @@ public class PerformanceAccumulator {
 
 
     //Temp Fields:
-    private long updateStartTime; //Начало обновления движка
-    private EntitySystem currentSystem; //текущая обновляемая система. NULL если в данный момент никакая система не активна
+    private long updateStartTime; //start of Engine update
+    private EntitySystem currentSystem; //Current EntitySystem that is getting updated
     private long systemStartTime;
     private long systemFinishTime;
     private long renderStarted;
-    private long afterUpdateStart; //Начало processAfterUpdateOperations()
+    private long afterUpdateStart; //Start of processAfterUpdateOperations()
 
     public PerformanceAccumulator() {
         for (int i = 0; i < size; i++) {
