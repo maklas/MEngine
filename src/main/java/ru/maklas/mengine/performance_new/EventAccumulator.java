@@ -17,7 +17,7 @@ public class EventAccumulator {
 
         eventData.calls++;
         eventData.totalTime += totalTime;
-        eventData.internalTime += internalTime;
+        eventData.selfTime += internalTime;
     }
 
 

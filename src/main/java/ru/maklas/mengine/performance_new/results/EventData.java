@@ -7,7 +7,7 @@ public class EventData {
     public Class eventClass;
     public long totalTime;
     public int calls;
-    public long internalTime;
+    public long selfTime;
 
     public EventData(Class eventClass) {
         this.eventClass = eventClass;
@@ -23,7 +23,7 @@ public class EventData {
     public static Comparator<EventData> internalTimeComparator = new Comparator<EventData>() {
         @Override
         public int compare(EventData o1, EventData o2) {
-            return (int) (o2.internalTime - o1.internalTime);
+            return (int) (o2.selfTime - o1.selfTime);
         }
     };
 

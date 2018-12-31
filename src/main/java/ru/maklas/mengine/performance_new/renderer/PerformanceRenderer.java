@@ -144,7 +144,7 @@ public class PerformanceRenderer {
 
         int microEvents = 0;
         for (EventData event : result.events) {
-            microEvents += getMicro(event.internalTime, event.calls);
+            microEvents += getMicro(event.selfTime, event.calls);
         }
         point.events = (int) (microEvents / (float) result.totalFrames);
 

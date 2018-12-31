@@ -11,4 +11,13 @@ public class NamedData {
     public NamedData(String name) {
         this.name = name;
     }
+    
+    public void updateMinMax(long val){
+        if (max < val){
+            max = val;
+        }
+        if (min > val){
+            min = val;
+        }
+    }
 }
