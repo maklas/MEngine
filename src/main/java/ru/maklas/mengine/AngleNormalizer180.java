@@ -1,4 +1,5 @@
 package ru.maklas.mengine;
+
 /**
  * Normalizes entity angle from -180 to 180
  */

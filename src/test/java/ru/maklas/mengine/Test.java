@@ -1,6 +1,7 @@
 package ru.maklas.mengine;
 
 import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.utils.Array;
 import ru.maklas.mengine.components.IRenderComponent;
 
 public class Test extends EntitySystem {
@@ -45,6 +46,9 @@ public class Test extends EntitySystem {
 
         System.out.println(engine.captureResults().toString());
 
+        BundlerKey<Array<String>> key = BundlerKey.of("sdf");
+
+        Array<String> strings = engine.getBundler().get(key);
     }
 
 

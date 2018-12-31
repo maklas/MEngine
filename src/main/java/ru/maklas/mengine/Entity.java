@@ -18,7 +18,7 @@ public class Entity {
     public static AngleNormalizer angleNormalizer = new AngleNormalizerNONE();
 
     /**
-     * Id of the entity. Use it as you wish. MEngine's only interraction with it is only via {@link Engine#findById(int)}
+     * Id of the entity. Use it as you wish. MEngine's only interaction with it is via {@link Engine#findById(int)}
      */
     public int id;
     /**
@@ -30,38 +30,39 @@ public class Entity {
      */
     public float y;
     /**
-     * Angle of the Entity
+     * Angle of the Entity. Field is private, so use getter and setter.
+     * {@link AngleNormalizer} is used for keeping angle in specific region 0..360 for example
      */
     private float angle;
     /**
-     * Z order for the Entity. Depicts current Entity position in Z axis.
+     * Position of the Entity in Z axis.
      * {@link IterableZSortedRenderSystem} uses this parameter to render Entities in order.
      */
     public int layer;
     /**
-     * User-int. Can be used as a mask or for fast Entity classification.
-     * During game development it almost always ends up with having to add EntityTypeComponent
-     * for every Entity, so this int may be of some help when it happens.
+     * User-defined int. Can be used as a mask or for fast Entity classification. Basically for all you want.
+     * During game development with ECS, there is always a need to make EntityTypeComponent that will tell what kind
+     * of Entity it is. With this int, type can be accessed much faster.
      */
-    public int type = -1;
+    public int type;
 
 
     public final Signal<EntityComponentEvent> componentSignal = new Signal<EntityComponentEvent>(2);
-    private final Component[] components;
+    final Component[] components = new Component[Engine.TOTAL_COMPONENTS];
     private Array<Subscription> subscriptions;
     Engine engine;
     Array<Component> componentArray = new Array<Component>(12);
 
-    public Entity() {
-        this(0, 0, 0, 0);
-    }
+    public Entity() {}
 
     public Entity(int id) {
-        this(id, 0, 0, 0);
+        this.id = id;
     }
 
     public Entity(float x, float y, int layer) {
-        this(0, x, y, layer);
+        this.x = x;
+        this.y = y;
+        this.layer = layer;
     }
 
     public Entity(int id, float x, float y, int layer) {
@@ -69,7 +70,6 @@ public class Entity {
         this.x = x;
         this.y = y;
         this.layer = layer;
-        components = new Component[Engine.TOTAL_COMPONENTS];
     }
 
     public Entity(int id, int type, float x, float y, int layer) {
@@ -78,12 +78,9 @@ public class Entity {
         this.x = x;
         this.y = y;
         this.layer = layer;
-        components = new Component[Engine.TOTAL_COMPONENTS];
     }
 
-
     // COMPONENT MANIPULATION
-
 
     /**
      * Never remove from this array
@@ -102,45 +99,50 @@ public class Entity {
     }
 
     /**
-     * Adds new Component to the entity with the help of Component Mapper (can be used for microOptimization).
+     * Adds new Component to the entity with the help of Component Mapper.
+     * A bit faster than {@link #add(Component)} (can be used for microOptimization).
      * Replaces if this Entity already had component of this class.
      */
     public final <T extends Component> Entity add(T component, ComponentMapper<T> mapper){
-        Component oldComponent = components[mapper.id];
+        int mapperId = mapper.id;
+        Component oldComponent = components[mapperId];
         if (oldComponent != null){
             componentArray.removeValue(oldComponent, true);
-            EntityComponentEvent e = eventPool.obtain().setUp(this, oldComponent, mapper, false);
+            EntityComponentEvent e = eventPool.obtain().setUp(this, oldComponent, mapperId, false);
             componentSignal.dispatch(e);
             eventPool.free(e);
         }
-        components[mapper.id] = component;
+        components[mapperId] = component;
         componentArray.add(component);
-        EntityComponentEvent e = eventPool.obtain().setUp(this, component, mapper, true);
+        EntityComponentEvent e = eventPool.obtain().setUp(this, component, mapperId, true);
         componentSignal.dispatch(e);
         eventPool.free(e);
         return this;
     }
 
     /**
-     * Removes Component of specified class from this entity
-     */
-    public final Component remove(Class<? extends Component> cClass){
-        return remove(ComponentMapper.of(cClass));
-    }
-
-    /**
      * Removes Component of specified ComponentMapper from this entity
      */
     public final <T extends Component> T remove(ComponentMapper<T> mapper){
-        Component component = components[mapper.id];
-        components[mapper.id] = null;
+        int mapperId = mapper.id;
+        Component component = components[mapperId];
+        components[mapperId] = null;
         if (component != null) {
             componentArray.removeValue(component, true);
-            EntityComponentEvent e = eventPool.obtain().setUp(this, component, mapper, false);
+            EntityComponentEvent e = eventPool.obtain().setUp(this, component, mapperId, false);
             componentSignal.dispatch(e);
             eventPool.free(e);
         }
         return (T) component;
+    }
+
+    /**
+     * Gets component of specified class from this Entity. Since uses Map for retrieval, complexity for the worst case is O(log(n).
+     * Use {@link #get(ComponentMapper)} for ligtning O(1) speed.
+     */
+    @SuppressWarnings("all")
+    public final <T extends Component> T get(Class<T> cClass){
+        return (T) components[ComponentMapper.of(cClass).id];
     }
 
     /**
@@ -154,15 +156,6 @@ public class Entity {
     @SuppressWarnings("all")
     final Component get(int mapperKey){
         return components[mapperKey];
-    }
-
-    /**
-     * Gets component of specified class from this Entity. Since uses Map for retrieval, complexity for the worst case is O(log(n).
-     * Use {@link #get(ComponentMapper)} for ligning O(1) speed.
-     */
-    @SuppressWarnings("all")
-    public final <T extends Component> T get(Class<T> cClass){
-        return (T) components[ComponentMapper.of(cClass).id];
     }
 
 
@@ -184,23 +177,26 @@ public class Entity {
     }
 
 
-    public void set(float x, float y){
+    public Entity set(float x, float y){
         this.x = x;
         this.y = y;
+        return this;
     }
 
-    public void set(float x, float y, int z){
+    public Entity set(float x, float y, int layer){
         this.x = x;
         this.y = y;
-        this.layer = z;
+        this.layer = layer;
+        return this;
     }
 
-    public void set(int id, int type, float x, float y, int z){
+    public Entity set(int id, int type, float x, float y, int layer){
         this.id = id;
         this.type = type;
         this.x = x;
         this.y = y;
-        this.layer = z;
+        this.layer = layer;
+        return this;
     }
 
     //*****************//
@@ -253,7 +249,6 @@ public class Entity {
     }
 
     //ENGINE events
-
     final void addToEngine(Engine engine){
         this.engine = engine;
         addedToEngine(engine);
@@ -268,7 +263,6 @@ public class Entity {
 
     /**
      * Check if this entity is inside of Engine
-     * @return
      */
     public final boolean isInEngine(){
         return engine != null;
