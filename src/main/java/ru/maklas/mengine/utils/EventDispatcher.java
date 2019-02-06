@@ -9,6 +9,9 @@ public class EventDispatcher {
     private final ObjectMap<Class, Signal> map = new ObjectMap<Class, Signal>();
     private final Array<Object> eventStack = new Array<Object>();
 
+    /**
+     * Subscribes to receive specific Event
+     */
     @SuppressWarnings("all")
     public <T> void subscribe(Subscription<T> subscription){
         Signal<T> signal = map.get(subscription.clazz);
@@ -27,6 +30,9 @@ public class EventDispatcher {
         }
     }
 
+    /**
+     * Dispatches event. All Subscriptions that subscribed to this event will be notified.
+     */
     @SuppressWarnings("all")
     public void dispatch(Object event){
         Signal signal = map.get(event.getClass());
@@ -70,15 +76,9 @@ public class EventDispatcher {
      * <p>
      *     Example:
      *
-     *     <li>
-     *         index = 0. Will return firstEvent()
-     *     </li>
-     *     <li>
-     *         index = 1. Will return second event that was dispatched during firstEvent()
-     *     </li>
-     *     <li>
-     *         index = -1. Will return the event that was dispatched right before currentEvent().
-     *     </li>
+     *     <li>index = 0. Will return firstEvent()</li>
+     *     <li>index = 1. Will return second event that was dispatched during firstEvent()</li>
+     *     <li>index = -1. Will return the event that was dispatched right before currentEvent()</li>
      * </p>
      *
      * @throws RuntimeException if abs(index) >= stackSize()!
@@ -90,7 +90,6 @@ public class EventDispatcher {
             return eventStack.get(eventStack.size - 1 + index);
         }
     }
-
 
     public void clear() {
         map.clear();

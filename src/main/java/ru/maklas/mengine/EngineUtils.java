@@ -4,6 +4,9 @@ import com.badlogic.gdx.utils.Consumer;
 import com.badlogic.gdx.utils.Predicate;
 import ru.maklas.mengine.utils.Listener;
 
+/**
+ * Handy utils for Engine.
+ */
 public class EngineUtils {
 
     public static ComponentChecker makeChecker(Class<? extends Component>... components){

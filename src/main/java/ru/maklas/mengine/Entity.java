@@ -6,6 +6,13 @@ import ru.maklas.mengine.utils.AngleNormalizerNONE;
 import ru.maklas.mengine.utils.Listener;
 import ru.maklas.mengine.utils.Signal;
 
+/**
+ * <p>
+ *     Entity is a game object that resides in {@link Engine}.
+ *     By itself it only has a couple of fields that determine it's position.
+ *     Any other functionality can be added to Entity with {@link Component components}.
+ * </p>
+ */
 public class Entity {
 
     private static final Pool<EntityComponentEvent> eventPool = new Pool<EntityComponentEvent>() {
@@ -15,6 +22,9 @@ public class Entity {
         }
     };
 
+    /**
+     * {@link AngleNormalizer} for all Entities.
+     */
     public static AngleNormalizer angleNormalizer = new AngleNormalizerNONE();
 
     /**
@@ -46,7 +56,9 @@ public class Entity {
      */
     public int type;
 
-
+    /**
+     * Dispatches event whenever a component is added or removed from this Entity
+     */
     public final Signal<EntityComponentEvent> componentSignal = new Signal<EntityComponentEvent>(2);
     final Component[] components = new Component[Engine.TOTAL_COMPONENTS];
     private Array<Subscription> subscriptions;
@@ -83,7 +95,8 @@ public class Entity {
     // COMPONENT MANIPULATION
 
     /**
-     * Never remove from this array
+     * Never remove from this array.
+     * @return List of added component.
      */
     public final Array<Component> getComponents() {
         return componentArray;
@@ -91,7 +104,6 @@ public class Entity {
 
     /**
      * Adds new Component to the entity. Replaces if this Entity already had component of this class.
-     *
      */
     public final Entity add(Component component){
         Class aClass = component.getClass();

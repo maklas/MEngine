@@ -6,6 +6,9 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Comparator;
 
+/**
+ * Stores Systems in Engine. Provides methods for their access
+ */
 public class SystemManager {
 
     private static final SystemComparator systemComparator = new SystemComparator();
@@ -60,6 +63,9 @@ public class SystemManager {
         return false;
     }
 
+    /**
+     * Returns system by it's class.
+     */
     @SuppressWarnings("unchecked")
     public <T extends SubscriptionSystem> T getSystem(Class<T> systemType) {
         return (T) systemsByClass.get(systemType);
@@ -71,19 +77,23 @@ public class SystemManager {
 
 
     /**
-     * Do not edit!
+     * Do not edit this Array!
      */
     public final Array<SubscriptionSystem> getSystems() {
         return systems;
     }
 
     /**
-     * Do not edit!
+     * Do not edit this Array!
+     * @return All EntitySystems. <b>Not Subscription Systems, not RenderSystems</b>. To get all Systems use {@link #getAll()}
      */
     public final Array<EntitySystem> getEntitySystems() {
         return entitySystems;
     }
 
+    /**
+     * @return All Subscription Systems, Entity Systems and Render Systems.
+     */
     public final SubscriptionSystem[] getAll() {
 
         final int size = systems.size + renderSystems.size;

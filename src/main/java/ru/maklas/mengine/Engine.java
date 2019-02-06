@@ -6,6 +6,28 @@ import org.jetbrains.annotations.Nullable;
 import ru.maklas.mengine.utils.EventDispatcher;
 import ru.maklas.mengine.utils.Listener;
 
+/**
+ *
+ * <p>
+ *      Engine is a complete set of utils and managers that allow for ECS framework to work.
+ * </p>
+ * <p>
+ *      It consists of and does job of:
+ *      <li>EntityStorage - stores all added Entities</li>
+ *      <li>{@link EntityFinder} - Helps to find Entities by their Ids</li>
+ *      <li>{@link SystemManager} - Stores and manages systems</li>
+ *      <li>{@link GroupManager} - Helps to group Entities by their Components</li>
+ *      <li>{@link Bundler} - Stores user-objects for injection in Systems and Entities</li>
+ *      <li>{@link EventDispatcher} - Subscribes and dispatches events across Engine</li>
+ *
+ * <p>
+ *      You add Systems and Entities to the Engine which does all it's magic in {@link #update(float)} and {@link #render()} methods.
+ *      Everything rest can be found in those managers.
+ * </p>
+ *
+ * </p>
+ *
+ */
 public class Engine implements Disposable {
 
     public static int TOTAL_COMPONENTS = 64;
@@ -24,6 +46,7 @@ public class Engine implements Disposable {
     private Bundler bundler;
 
     boolean updating;
+    float lastDt;
     private final DisposeOperation disposeOperation = new DisposeOperation();
 
     /**
@@ -77,6 +100,9 @@ public class Engine implements Disposable {
         return this;
     }
 
+    /**
+     * @see #add(Entity)
+     */
     public Engine addAll(Entity[] entities){
         for (Entity entity : entities) {
             add(entity);
@@ -84,6 +110,9 @@ public class Engine implements Disposable {
         return this;
     }
 
+    /**
+     * @see #add(Entity)
+     */
     public Engine addAll(Array<? extends Entity> entities){
         for (Entity entity : entities) {
             add(entity);
@@ -118,7 +147,7 @@ public class Engine implements Disposable {
     }
 
     /**
-     * Removes Entity from Engine. Notifies listeners
+     * Removes Entity from Engine. Notifies listeners.
      */
     public boolean remove(@NotNull Entity entity){
         if (entity.engine != this){
@@ -240,6 +269,13 @@ public class Engine implements Disposable {
         this.dispatcher = dispatcher;
     }
 
+    /**
+     * Last delta-time passed to Engine via {@link #update(float)}.
+     */
+    public float getLastDt() {
+        return lastDt;
+    }
+
     //*********************//
     //* EVENT DISPATCHING *//
     //*********************//
@@ -354,6 +390,10 @@ public class Engine implements Disposable {
         inUpdateDirty = false;
     }
 
+
+    /**
+     * Adds {@link EntityListener} that allows to be notified whenever Entity is added or removed from Engine.
+     */
     public void addListener(EntityListener listener){
         listeners.add(listener);
     }
@@ -363,9 +403,9 @@ public class Engine implements Disposable {
     }
 
     /**
-     * Calls {@link RenderEntitySystem#invalidate()} on RenderSystem if present
+     * Calls {@link RenderEntitySystem#invalidate()} on RenderSystems
      */
-    public void invalidateRenderZ(){
+    public void invalidateRender(){
         Array<RenderEntitySystem> renderSystems = systemManager.getRenderSystems();
         for (RenderEntitySystem renderSystem : renderSystems) {
             renderSystem.invalidate();
@@ -385,6 +425,7 @@ public class Engine implements Disposable {
             throw new IllegalStateException("Cannot call update() on an Engine that is already updating.");
         }
         updating = true;
+        lastDt = dt;
 
         Array<EntitySystem> systems = systemManager.getEntitySystems();
 
@@ -402,7 +443,7 @@ public class Engine implements Disposable {
     }
 
     /**
-     * Calls {@link RenderEntitySystem#render()} if System is present
+     * Calls {@link RenderEntitySystem#render()} on each RenderSystem that is added
      */
     public void render() {
         for (RenderEntitySystem rs : systemManager.getRenderSystems()) {
@@ -413,11 +454,10 @@ public class Engine implements Disposable {
     }
 
     /**
-     * Removes:
-     * 1. All Entities;
-     * 2. All Systems;
+     * 1. Removes All Entities;
+     * 2. Removes All Systems;
      * 3. Clears Dispatchers.
-     * 4. All Listeners;
+     * 4. Removes All Listeners;
      * 5. Clears Bundler;
      */
     public void dispose(){

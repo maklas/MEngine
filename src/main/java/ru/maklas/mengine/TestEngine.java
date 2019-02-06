@@ -6,6 +6,11 @@ import org.jetbrains.annotations.Nullable;
 import ru.maklas.mengine.performance_new.PerformanceAccumulator;
 import ru.maklas.mengine.performance_new.results.PerformanceResult;
 
+/**
+ * Engine used for performance profiling.
+ * Adds significant overhead if used in Android.
+ * Use {@link #captureResults()} to dump performance statistics.
+ */
 public class TestEngine extends Engine {
 
     PerformanceAccumulator accumulator;
@@ -60,6 +65,7 @@ public class TestEngine extends Engine {
             throw new IllegalStateException("Cannot call update() on an Engine that is already updating.");
         }
         updating = true;
+        lastDt = dt;
 
         Array<EntitySystem> systems = systemManager.getEntitySystems();
         PerformanceAccumulator acc = this.accumulator;
@@ -95,6 +101,11 @@ public class TestEngine extends Engine {
         }
     }
 
+    /**
+     * Dumps performance profiling.
+     * Do it after Engine.render() or before Engine.update() to see valid statistics
+     * Print it using {@link PerformanceResult#toString()}
+     */
     public PerformanceResult captureResults() {
         return accumulator.captureResults(entities.size);
     }

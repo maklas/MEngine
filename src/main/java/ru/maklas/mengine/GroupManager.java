@@ -3,6 +3,10 @@ package ru.maklas.mengine;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.ImmutableArray;
 
+/**
+ * Manages Groups of Entities by their components.
+ * With this manager you can access All Entities which have specific component in them.
+ */
 public class GroupManager {
 
     private final Engine engine;
@@ -41,6 +45,10 @@ public class GroupManager {
         }
     }
 
+
+    /**
+     * @return a Group of Entities which have specified component in them
+     */
     public Group of(ComponentMapper mapper){
         int mapperId = mapper.id;
         Group group = groups[mapperId];
@@ -62,6 +70,9 @@ public class GroupManager {
         return group;
     }
 
+    /**
+     * @return a Group of Entities which have specified component in them
+     */
     public Group of(Class<? extends Component> clazz){
         return of(ComponentMapper.of(clazz));
     }

@@ -2,6 +2,10 @@ package ru.maklas.mengine;
 
 import com.badlogic.gdx.utils.ObjectMap;
 
+/**
+ * Is like a Map to store User defined objects inside {@link Engine}.
+ * It's much better to use Bundler rather than use System's constructor to pass data to it.
+ */
 public class Bundler {
 
     private final ObjectMap<String, Object> stringMap = new ObjectMap<String, Object>();

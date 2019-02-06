@@ -78,7 +78,7 @@ public class Test extends EntitySystem {
         for (int i = 0; i < MathUtils.random(4); i++) {
             getEngine().dispatchLater(new Object());
         }
-        getEngine().invalidateRenderZ();
+        getEngine().invalidateRender();
     }
 
 

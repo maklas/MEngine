@@ -9,11 +9,11 @@ import java.util.Comparator;
 
 /**
  * <p>
- *     Automatically sorts Entities by their ZOder.
+ *     Automatically sorts Entities by their Layer.
  *     All is left is:
  *     <li>Create rendering component that extends {@link IRenderComponent}</li>
  *     <li>Create your own rendering implementation by extending this class</li>
- * <p>Use {@link #invalidate()} or {@link Engine#invalidateRenderZ()} to re-sort Entities on next render.</p>
+ * <p>Use {@link #invalidate()} or {@link Engine#invalidateRender()} to re-sort Entities before next rendering</p>
  * </p>
  */
 public abstract class IterableZSortedRenderSystem<T extends IRenderComponent> extends RenderEntitySystem{

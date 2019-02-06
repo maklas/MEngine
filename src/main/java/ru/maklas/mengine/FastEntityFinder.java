@@ -1,8 +1,8 @@
 package ru.maklas.mengine;
 
 /**
- * Only works if you always set ID before adding Entity into engine and it doesn't change.
  * Uses an array of specified size to find entities with 0 <= id < size.
+ * Only works if you always set ID before adding Entity into engine and it doesn't change.
  */
 public class FastEntityFinder implements EntityFinder, EntityListener {
 

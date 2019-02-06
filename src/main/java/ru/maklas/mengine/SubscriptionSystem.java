@@ -5,6 +5,22 @@ import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.ImmutableArray;
 import ru.maklas.mengine.utils.Listener;
 
+/**
+ * <p>
+ *      Base System class. Does not provide update() method. Is able to subscribe to events and dispatch them through Engine.
+ *      A System is a class that performs specific action on specific {@link Entity Entities} based on their {@link Component components}.
+ * </p>
+ * <p>
+ * Examples of SubscriptionSystems:
+ *      <li>SoundSystem</li>
+ *      <li>SpecialEffectsSystem</li>
+ *      <li>DamageSystem</li>
+ *      <li>HealthSystem</li>
+ * </p>
+ * <p>
+ *     These systems, if added to Engine, will act upon Entities whenever event fires.
+ * </p>
+ */
 public class SubscriptionSystem {
 
     protected Engine engine;
@@ -25,8 +41,16 @@ public class SubscriptionSystem {
         disposeAll();
     }
 
+    /**
+     * Called whenever this system is added to engine. By this time, system will have access to Engine.
+     * It's a good place to subscribe to systems, create your objects, obtain anything you need from Engine.bundler.
+     */
     public void onAddedToEngine(Engine engine){}
 
+    /**
+     * Called when this System is removed from Engine.
+     * Good place to clean up, do some actions on Entities or remove components
+     */
     public void onRemovedFromEngine(Engine engine){}
 
 
@@ -34,6 +58,9 @@ public class SubscriptionSystem {
         return engine;
     }
 
+    /**
+     * @see Engine#entitiesFor(Class)
+     */
     protected final ImmutableArray<Entity> entitiesFor(Class<? extends Component> componentClass){
         return engine.entitiesFor(componentClass);
     }
@@ -74,6 +101,11 @@ public class SubscriptionSystem {
         subscribe(subscription);
         return subscription;
     }
+
+    /**
+     * Unsubscribes from Event. Don't forget to keep your Subscription if you want to do it.
+     * Is not necessary to be called if you want to unsubscribe whenever System is removed from Engine as it does so automatically.
+     */
     protected final void unsubscribe(Subscription subscription){
         engine.unsubscribe(subscription);
     }

@@ -3,6 +3,9 @@ package ru.maklas.mengine;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.ImmutableArray;
 
+/**
+ * A group of Entities all of which have specific component in them
+ */
 public class Group {
 
     Array<Entity> entityArray = new Array<Entity>();

@@ -3,7 +3,9 @@ package ru.maklas.mengine;
 import com.badlogic.gdx.utils.IntMap;
 
 /**
- * Only works if you always set ID before adding Entity into engine and it doesn't change
+ * Uses Map<Integer, Entity> to map Entity's ID to itself.
+ * Only works if you always set ID before adding Entity into engine and it doesn't change.
+ * Otherwise will produce bugs.
  */
 public class MappingEntityFinder implements EntityFinder, EntityListener {
 

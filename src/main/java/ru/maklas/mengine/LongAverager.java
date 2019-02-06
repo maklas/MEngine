@@ -1,9 +1,9 @@
 package ru.maklas.mengine;
 
+
 /**
  * Created by maklas on 07.10.2017.
  */
-
 class LongAverager {
 
     private final long[] values;

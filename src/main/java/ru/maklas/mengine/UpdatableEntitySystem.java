@@ -3,7 +3,7 @@ package ru.maklas.mengine;
 import com.badlogic.gdx.utils.Array;
 
 /**
- * System that update all {@link UpdatableEntity}.
+ * System that automatically updates all {@link UpdatableEntity}.
  */
 public class UpdatableEntitySystem extends EntitySystem {
 
