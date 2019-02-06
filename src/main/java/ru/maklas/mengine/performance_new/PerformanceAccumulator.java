@@ -2,7 +2,6 @@ package ru.maklas.mengine.performance_new;
 
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Pool;
-import org.jetbrains.annotations.Nullable;
 import ru.maklas.mengine.EntitySystem;
 import ru.maklas.mengine.RenderEntitySystem;
 import ru.maklas.mengine.performance_new.captures.EventCapture;
@@ -18,6 +17,15 @@ public class PerformanceAccumulator {
     private EventAccumulator eventAccumulator = new EventAccumulator();
     private Pool<EventCapture> eventCapturePool;
 
+
+    //Temp Fields:
+    private long updateStartTime; //start of Engine update
+    private EntitySystem currentSystem; //Current EntitySystem that is getting updated
+    private long systemStartTime;
+    private long systemFinishTime;
+    private long renderStarted;
+    private long afterUpdateStart; //Start of processAfterUpdateOperations()
+
     public PerformanceAccumulator() {
         for (int i = 0; i < size; i++) {
             frameDatas[i] = new FrameData();
@@ -32,7 +40,10 @@ public class PerformanceAccumulator {
         };
     }
 
-    private long updateStartTime;
+
+
+    //Engine.update();
+
     public void updateStarted(){
         int currentFrameId = currentFrameCounter++;
         currentFrame = frameDatas[currentFrameId];
@@ -49,24 +60,12 @@ public class PerformanceAccumulator {
         currentFrame.engineUpdateTime = now - updateStartTime;
     }
 
-    private long renderStarted;
-    private Class<? extends RenderEntitySystem> renderClass;
-    public void renderStarted(RenderEntitySystem system){
-        renderClass = system.getClass();
-        currentSystem = system;
-        renderStarted = System.nanoTime();
-    }
 
-    public void renderFinished(){
-        currentSystem = null;
-        long now = System.nanoTime();
-        currentFrame.renderTime = now - renderStarted;
-        currentFrame.addSystemUpdate(renderClass, currentFrame.renderTime);
-    }
 
-    @Nullable private EntitySystem currentSystem;
-    private long systemStartTime;
-    private long systemFinishTime;
+
+    //EntitySystem.update();
+    //+ executeLater()
+
     public void systemStarted(EntitySystem system){
         systemStartTime = System.nanoTime();
         currentSystem = system;
@@ -76,24 +75,34 @@ public class PerformanceAccumulator {
         systemFinishTime = System.nanoTime();
     }
 
-    /**
-     * Only triggered if current updating system had something to execute later
-     */
-    @SuppressWarnings("all")
     public void laterExecutionFinished(boolean runnablesExecuted){
-
         if (runnablesExecuted){
             long now = System.nanoTime();
             currentFrame.addSystemUpdate(currentSystem.getClass(), systemFinishTime - systemStartTime, now - systemFinishTime);
         } else {
             currentFrame.addSystemUpdate(currentSystem.getClass(), systemFinishTime - systemStartTime);
         }
-
-
         currentSystem = null;
     }
 
-    private long afterUpdateStart;
+
+    //RenderSystem.render();
+
+    public void systemRenderStarted(RenderEntitySystem system){
+        currentSystem = system;
+        renderStarted = System.nanoTime();
+    }
+
+    public void systemRenderFinished(){
+        long systemRenderTime = System.nanoTime() - renderStarted;
+        currentFrame.engineRenderTime += systemRenderTime;
+        currentFrame.addSystemUpdate(currentSystem.getClass(), systemRenderTime);
+        currentSystem = null;
+    }
+
+
+
+    //processAfterUpdateOperations()
     public void afterUpdateStarted(){
         afterUpdateStart = System.nanoTime();
     }
@@ -102,10 +111,13 @@ public class PerformanceAccumulator {
         currentFrame.afterUpdateTime = System.nanoTime() - afterUpdateStart;
     }
 
+
+
+    //EventDispatch
+
     private Array<EventCapture> eventStack = new Array<EventCapture>();
     public void eventDispatchStarted(Object event){
         long now = System.nanoTime();
-        Class<?> eventClass = event.getClass();
         if (eventStack.size != 0){
             EventCapture peek = eventStack.peek();
             if (peek.wasInterrupted()){
@@ -115,7 +127,7 @@ public class PerformanceAccumulator {
             }
         }
         EventCapture capture = eventCapturePool.obtain();
-        capture.eventClass = eventClass;
+        capture.eventClass = event.getClass();
         capture.entitySystem = currentSystem == null ? null : currentSystem.getClass();
         capture.started = now;
         eventStack.add(capture);
@@ -135,6 +147,10 @@ public class PerformanceAccumulator {
         eventCapturePool.free(last);
     }
 
+
+
+    //FindById
+
     long findByIdStart;
     int findById;
     public void findByIdStarted(int id){
@@ -145,6 +161,9 @@ public class PerformanceAccumulator {
     public void findByIdFinished(){
         currentFrame.findById(findById, System.nanoTime() - findByIdStart, currentSystem);
     }
+
+
+    //Entity: add | remove
 
     Array<Long> entityAddCaptures = new Array<Long>();
     public void startedAddingEntity(){
@@ -165,7 +184,6 @@ public class PerformanceAccumulator {
         long last = entityRemoveCaptures.pop();
         currentFrame.entityRemove(System.nanoTime() - last);
     }
-
 
     public PerformanceResult captureResults(int entities) {
         return new PerformanceResult(frameDatas, eventAccumulator, entities);

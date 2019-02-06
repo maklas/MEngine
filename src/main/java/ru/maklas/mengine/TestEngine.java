@@ -1,6 +1,7 @@
 package ru.maklas.mengine;
 
 import com.badlogic.gdx.utils.Array;
+import org.intellij.lang.annotations.MagicConstant;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ru.maklas.mengine.performance_new.PerformanceAccumulator;
@@ -54,9 +55,11 @@ public class TestEngine extends Engine {
 
     @Override
     void processAfterUpdateOperations() {
-        accumulator.afterUpdateStarted();
-        super.processAfterUpdateOperations();
-        accumulator.afterUpdateFinished();
+        if (afterUpdateQueue.size > 0) {
+            accumulator.afterUpdateStarted();
+            super.processAfterUpdateOperations();
+            accumulator.afterUpdateFinished();
+        }
     }
 
     @Override
@@ -80,7 +83,9 @@ public class TestEngine extends Engine {
             if (inUpdateDirty){
                 processInUpdateOperations();
                 acc.laterExecutionFinished(true);
-            } else acc.laterExecutionFinished(false);
+            } else {
+                acc.laterExecutionFinished(false);
+            }
         }
 
         updating = false;
@@ -94,9 +99,9 @@ public class TestEngine extends Engine {
         Array<RenderEntitySystem> renderSystems = systemManager.getRenderSystems();
         for (RenderEntitySystem rs : renderSystems) {
             if (rs.isEnabled()){
-                accumulator.renderStarted(rs);
+                accumulator.systemRenderStarted(rs);
                 rs.render();
-                accumulator.renderFinished();
+                accumulator.systemRenderFinished();
             }
         }
     }
@@ -107,6 +112,11 @@ public class TestEngine extends Engine {
      * Print it using {@link PerformanceResult#toString()}
      */
     public PerformanceResult captureResults() {
+        return captureResults(PerformanceResult.TOTAL);
+    }
+
+    public PerformanceResult captureResults(@MagicConstant(valuesFromClass = PerformanceResult.class) int eventSortType) {
+        PerformanceResult.EVENT_SORT_TYPE = eventSortType;
         return accumulator.captureResults(entities.size);
     }
 }

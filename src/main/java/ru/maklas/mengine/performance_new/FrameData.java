@@ -11,9 +11,9 @@ import ru.maklas.mengine.performance_new.captures.SystemCapture;
 
 public class FrameData implements Pool.Poolable {
 
-    public long engineUpdateTime;
-    public long renderTime;
+    public long engineUpdateTime; //Engine.update() time
     public long afterUpdateTime;
+    public long engineRenderTime; //Engine.render() time
     public Array<SystemCapture>   systems = new Array<SystemCapture>();
     public Array<EventCapture>    events = new Array<EventCapture>();
     public Array<FindByIDCapture> finds = new Array<FindByIDCapture>();
@@ -25,21 +25,18 @@ public class FrameData implements Pool.Poolable {
             return new SystemCapture();
         }
     };
-
     private Pool<EventCapture> eventPool = new Pool<EventCapture>() {
         @Override
         protected EventCapture newObject() {
             return new EventCapture();
         }
     };
-
     private Pool<FindByIDCapture> findPool = new Pool<FindByIDCapture>() {
         @Override
         protected FindByIDCapture newObject() {
             return new FindByIDCapture();
         }
     };
-
     private Pool<EntityCapture> entityPool = new Pool<EntityCapture>() {
         @Override
         protected EntityCapture newObject() {
@@ -49,7 +46,9 @@ public class FrameData implements Pool.Poolable {
 
     @Override
     public void reset() {
-        renderTime = 0;
+        engineUpdateTime = 0;
+        engineRenderTime = 0;
+        afterUpdateTime = 0;
 
         systemPool.freeAll(systems);
         systems.clear();

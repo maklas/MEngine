@@ -53,8 +53,7 @@ public class PerformanceResult {
         extractUpdate(engineUpdate, frames);
         extractRender(engineRender, frames);
         extractAfterUpdate(engineAfterUpdate, frames);
-        extractAdd(entityAdd, frames);
-        extractRemove(entityRemove, frames);
+        extractAddRemove(entityAdd,  entityRemove, frames);
 
         findById = extractById(frames);
         events = extractEvents(frames);
@@ -63,9 +62,9 @@ public class PerformanceResult {
 
     private void extractTotal(NamedData data, FrameData[] frames){
         for (FrameData frame : frames) {
-            long frameTotal = frame.engineUpdateTime + frame.renderTime;
+            long frameTotal = frame.engineUpdateTime + frame.engineRenderTime;
             data.totalTime += frameTotal;
-            updateMinMax(data, frameTotal);
+            data.updateMinMax(frameTotal);
             if (frameTotal > 0)
                 data.calls++;
         }
@@ -75,7 +74,7 @@ public class PerformanceResult {
         for (FrameData frame : frames) {
             long frameTotal = frame.engineUpdateTime;
             data.totalTime += frameTotal;
-            updateMinMax(data, frameTotal);
+            data.updateMinMax(frameTotal);
             if (frameTotal > 0)
                 data.calls++;
         }
@@ -83,9 +82,9 @@ public class PerformanceResult {
 
     private void extractRender(NamedData data, FrameData[] frames){
         for (FrameData frame : frames) {
-            long frameTotal = frame.renderTime;
+            long frameTotal = frame.engineRenderTime;
             data.totalTime += frameTotal;
-            updateMinMax(data, frameTotal);
+            data.updateMinMax(frameTotal);
             if (frameTotal > 0)
                 data.calls++;
         }
@@ -101,28 +100,14 @@ public class PerformanceResult {
         }
     }
 
-    private void extractAdd(NamedData data, FrameData[] frames){
+    private void extractAddRemove(NamedData add, NamedData remove, FrameData[] frames){
         for (FrameData frame : frames) {
             for (EntityCapture entity : frame.entities) {
-                if (entity.add) {
-                    long total = entity.time;
-                    data.totalTime += total;
-                    updateMinMax(data, total);
-                    data.calls++;
-                }
-            }
-        }
-    }
-
-    private void extractRemove(NamedData data, FrameData[] frames){
-        for (FrameData frame : frames) {
-            for (EntityCapture entity : frame.entities) {
-                if (!entity.add) {
-                    long total = entity.time;
-                    data.totalTime += total;
-                    updateMinMax(data, total);
-                    data.calls++;
-                }
+                NamedData data = entity.add ? add : remove;
+                long total = entity.time;
+                data.totalTime += total;
+                data.updateMinMax(total);
+                data.calls++;
             }
         }
     }
@@ -212,7 +197,7 @@ public class PerformanceResult {
                 }
 
                 eventData.totalTime += totalTime;
-                eventData.internalTime += internalTime;
+                eventData.selfTime += internalTime;
                 eventData.calls++;
             }
         }
@@ -256,7 +241,7 @@ public class PerformanceResult {
         builder.append("Calls: ").append(addSpacesRight(findById.calls + ", ", 10));
         builder.append("CPF: ").append(addSpacesRight(floatFormatted(cpf, 1) + ", ", 12));
         builder.append("avg: ").append(addSpacesRight(micro(avgNano) + ", ", 12));
-        builder.append("framePart: ").append(framePercent(findById.total / totalFrames));
+        builder.append("perFrame: ").append(framePercent(findById.total / totalFrames));
         builder.append('\n');
 
         Array<FindByIdData.SystemCall> topUseSystems = findById.getTopUseSystems();
@@ -275,7 +260,7 @@ public class PerformanceResult {
                 builder.append("     | ")
                         .append(addSpacesRight(topUseSystem.data.clazz.getSimpleName(), maxLen))
                         .append(" -> ").append(addSpacesRight(String.valueOf(topUseSystem.calls) + ", ", 9))
-                        .append("framePart: ").append(framePercent((long) (((float) topUseSystem.calls / totalFrames) * avgNano)))
+                        .append("perFrame: ").append(framePercent((long) (((float) topUseSystem.calls / totalFrames) * avgNano)))
                         .append('\n');
             }
         }
@@ -298,11 +283,10 @@ public class PerformanceResult {
         for (SystemData systemData : systemDatas) {
             builder.append(addSpacesRight(systemData.clazz.getSimpleName(), maxLen));
             builder.append(" -> ");
-            builder.append("avg: ").append(addSpacesRight(micro(systemData.totalTime / systemData.updates) + ", ", 12));
-            builder.append("min: ").append(addSpacesRight(micro(systemData.minTime) + ", ", 12));
-            builder.append("max: ").append(addSpacesRight(micro(systemData.maxTime) + ", ", 12));
-            builder.append("later: ").append(addSpacesRight(micro(systemData.totalLaterTime) + ", ", 12));
-            builder.append("framePart: ").append(framePercent(systemData.totalTime / systemData.updates));
+            builder.append("avg: ").append(addSpacesRight(micro(systemData.totalTime / systemData.updates), 9)).append("(").append(framePercent(systemData.totalTime / systemData.updates)).append("),  ");
+            builder.append("min: ").append(addSpacesRight(micro(systemData.minTime) + ", ", 10));
+            builder.append("max: ").append(addSpacesRight(micro(systemData.maxTime) + ", ", 10));
+            builder.append("later: ").append(addSpacesRight(micro(systemData.totalLaterTime) + ", ", 10));
             builder.append('\n');
         }
 
@@ -312,6 +296,41 @@ public class PerformanceResult {
 
     private String eventsToString() {
         return eventsToString(events);
+    }
+
+    private String eventsToString(Array<EventData> events){
+        int len = 0;
+        for (EventData event : events) {
+            int classNameLen = event.eventClass.getSimpleName().length();
+            if (len < classNameLen){
+                len = classNameLen;
+            }
+        }
+
+        StringBuilder builder = new StringBuilder();
+        for (EventData event : events) {
+            long selfTimePerCall = event.selfTime / event.calls;
+            long totalTimePerCall = event.totalTime / event.calls;
+
+            builder.append(addSpacesRight(event.eventClass.getSimpleName(), len));
+            builder.append(" -> ");
+            builder.append("calls: ").append(addSpacesRight(event.calls + ", ", 7));
+            builder.append("self: ").append(addSpacesRight(micro(selfTimePerCall) + ", ", 10));
+            builder.append("total: ").append(addSpacesRight(micro(totalTimePerCall) + ", ", 10));
+            builder.append("perCall: ")
+                    .append(framePercent(selfTimePerCall))
+                    .append(" | ")
+                    .append(framePercent(totalTimePerCall))
+                    .append(",  ");
+            builder.append("perFrame: ")
+                    .append(framePercent(event.selfTime / totalFrames))
+                    .append(" | ")
+                    .append(framePercent(event.totalTime / totalFrames));
+            builder.append('\n');
+        }
+
+
+        return builder.toString();
     }
 
     private String allTimeEventsToString() {
@@ -332,36 +351,8 @@ public class PerformanceResult {
             builder.append(addSpacesRight(event.eventClass.getSimpleName(), len));
             builder.append(" -> ");
             builder.append("calls: ").append(addSpacesRight(event.calls + ", ", 8));
-            builder.append("avg-internal: ").append(addSpacesRight(micro(event.internalTime / event.calls) + ", ", 12));
-            builder.append("avg-total: ").append(addSpacesRight(micro(event.totalTime / event.calls) + ", ", 12));
-            builder.append('\n');
-        }
-
-
-        return builder.toString();
-    }
-
-    private String eventsToString(Array<EventData> events){
-        int len = 0;
-        for (EventData event : events) {
-            int classNameLen = event.eventClass.getSimpleName().length();
-            if (len < classNameLen){
-                len = classNameLen;
-            }
-        }
-
-        StringBuilder builder = new StringBuilder();
-        for (EventData event : events) {
-            builder.append(addSpacesRight(event.eventClass.getSimpleName(), len));
-            builder.append(" -> ");
-            builder.append("calls: ").append(addSpacesRight(event.calls + ", ", 8));
-            builder.append("CPF: ").append(addSpacesRight(floatFormatted(event.calls / (float) totalFrames, 1) + ", ", 9));
-            builder.append("avg-internal: ").append(addSpacesRight(micro(event.internalTime / event.calls) + ", ", 12));
-            builder.append("avg-total: ").append(addSpacesRight(micro(event.totalTime / event.calls) + ", ", 12));
-            builder.append("framePart: ")
-                    .append(framePercent(event.internalTime / totalFrames))
-                    .append(" | ")
-                    .append(framePercent(event.totalTime / totalFrames));
+            builder.append("self: ").append(addSpacesRight(micro(event.selfTime / event.calls), 9)).append("(").append(framePercent(event.selfTime / event.calls)).append("),  ");
+            builder.append("total: ").append(addSpacesRight(micro(event.totalTime / event.calls), 9)).append("(").append(framePercent(event.totalTime / event.calls)).append(")");
             builder.append('\n');
         }
 
@@ -370,7 +361,7 @@ public class PerformanceResult {
     }
 
     private String firstRowsToString(){
-        int len = maxLenth(
+        int len = maxLength(
                 engineTotal,
                 engineUpdate,
                 engineRender,
@@ -412,14 +403,13 @@ public class PerformanceResult {
 
 
         return addSpacesRight(namedData.name, columnLength) + " -> " +
-                "calls: " + addSpacesRight(namedData.calls + ", ", 10) +
-                "avg: " + addSpacesRight(avg + ", ", 12) +
-                "min: " + addSpacesRight(min + ", ", 12) +
-                "max: " + addSpacesRight(max + ", ", 12) +
-                "framePart: " + framePart;
+                "calls: " + addSpacesRight(namedData.calls + ", ", 7) +
+                "avg: " + addSpacesRight(avg, 9) + "(" + framePart + "),  " +
+                "min: " + addSpacesRight(min + ", ", 10) +
+                "max: " + max;
     }
 
-    private int maxLenth(NamedData... datas){
+    private int maxLength(NamedData... datas){
         int max = 0;
         for (NamedData data : datas) {
             if (data.name.length() > max){
@@ -438,11 +428,15 @@ public class PerformanceResult {
     NumberFormat mcroFormat = new DecimalFormat("#0.0", new DecimalFormatSymbols(Locale.ENGLISH));
     private String micro(long nano){
         double microseconds = ((double) nano) / 1000;
-        return mcroFormat.format(microseconds) + " us";
+        if (microseconds <= 1) {
+            return mcroFormat.format(microseconds) + " us";
+        } else {
+            return Math.round(microseconds) + " us";
+        }
     }
 
     /**
-     * Процент от времени кадра (Если учесть FPS = 60)
+     * Percent of frame time (Considering FPS = 60)
      */
     private String framePercent(long nano){
         double frameTimeNano = 1.6666666666666666E7;
