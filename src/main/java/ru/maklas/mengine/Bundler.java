@@ -40,19 +40,19 @@ public class Bundler {
 
     public <T> T getAssert(String s){
         T o = get(s);
-        if (o == null) throw new RuntimeException(s + " is required to be in Bundler");
+        if (o == null) throw new RuntimeException(s + " is required");
         return o;
     }
 
     public <T> T getAssert(Class<T> clazz){
         T o = get(clazz);
-        if (o == null) throw new RuntimeException(clazz.getSimpleName() + " is required to be in Bundler");
+        if (o == null) throw new RuntimeException(clazz.getSimpleName() + " is required");
         return o;
     }
 
     public <T> T getAssert(BundlerKey<T> key){
         T o = get(key);
-        if (o == null) throw new RuntimeException(key + " is required to be in Bundler");
+        if (o == null) throw new RuntimeException(key + " is required");
         return o;
     }
 
