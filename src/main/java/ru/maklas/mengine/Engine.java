@@ -167,6 +167,14 @@ public class Engine implements Disposable {
         return true;
     }
 
+    /** Removes all entities that have specified component **/
+    public void removeAll(ComponentMapper mapper){
+        Entity[] entitiesToRemove = groupManager.of(mapper).entityArray.toArray(Entity.class);
+        for (Entity entity : entitiesToRemove) {
+            remove(entity);
+        }
+    }
+
     /**
      * Removes all Entities from the engine.
      * If you stumble upon Concurrency Exception, please try trigger it later after engine update is finished.

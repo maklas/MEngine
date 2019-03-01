@@ -71,6 +71,33 @@ public class SystemManager {
         return (T) systemsByClass.get(systemType);
     }
 
+    /**
+     * Returns first system that have the same class or exrtend it
+     */
+    @SuppressWarnings("unchecked")
+    public <T extends SubscriptionSystem> T getExtendableSystem(Class<T> systemType) {
+        for (SubscriptionSystem system : systems) {
+            if (systemType.isAssignableFrom(system.getClass())){
+                return (T) system;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Returns all systems that have the same class or extend it
+     */
+    @SuppressWarnings("unchecked")
+    public <T extends SubscriptionSystem> Array<T> getExtendableSystems(Class<T> systemType) {
+        Array<T> systems = new Array<T>();
+        for (SubscriptionSystem system : this.systems) {
+            if (systemType.isAssignableFrom(system.getClass())){
+                systems.add(((T) system));
+            }
+        }
+        return systems;
+    }
+
     public final Array<RenderEntitySystem> getRenderSystems() {
         return renderSystems;
     }
