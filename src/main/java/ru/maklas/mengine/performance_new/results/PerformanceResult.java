@@ -286,7 +286,7 @@ public class PerformanceResult {
             builder.append("avg: ").append(addSpacesRight(micro(systemData.totalTime / systemData.updates), 9)).append("(").append(framePercent(systemData.totalTime / systemData.updates)).append("),  ");
             builder.append("min: ").append(addSpacesRight(micro(systemData.minTime) + ", ", 10));
             builder.append("max: ").append(addSpacesRight(micro(systemData.maxTime) + ", ", 10));
-            builder.append("later: ").append(addSpacesRight(micro(systemData.totalLaterTime) + ", ", 10));
+            builder.append("later: ").append(micro(systemData.totalLaterTime));
             builder.append('\n');
         }
 
@@ -454,6 +454,18 @@ public class PerformanceResult {
             builder.append(" ");
         }
         return builder.toString();
+    }
+
+    private static String addSpacesLeft(String s, int minSize){
+        int size = s.length();
+        if (size >= minSize){
+            return s;
+        }
+        StringBuilder builder = new StringBuilder();
+        for (int i = 0; i < minSize - size; i++) {
+            builder.append(" ");
+        }
+        return builder.append(s).toString();
     }
 
     public static String floatFormatted(float f, int numbersAfterComma){
