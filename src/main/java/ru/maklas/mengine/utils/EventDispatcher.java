@@ -6,8 +6,8 @@ import ru.maklas.mengine.Subscription;
 
 public class EventDispatcher {
 
-    private final ObjectMap<Class, Signal> map = new ObjectMap<Class, Signal>();
-    private final Array<Object> eventStack = new Array<Object>();
+    protected final ObjectMap<Class, Signal> map = new ObjectMap<Class, Signal>();
+    protected final Array<Object> eventStack = new Array<Object>();
 
     /**
      * Subscribes to receive specific Event
