@@ -3,12 +3,36 @@ package ru.maklas.mengine;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.utils.Array;
 import ru.maklas.mengine.components.IRenderComponent;
+import ru.maklas.mengine.utils.SuperEventDispatcher;
 
 public class Test extends EntitySystem {
 
     public static final int updateFrames = 1000;
 
     public static void main(String[] args) {
+        SuperEventDispatcher superEventDispatcher = new SuperEventDispatcher();
+        superEventDispatcher.registerClass(Engine.class);
+        superEventDispatcher.registerClass(TestEngine.class);
+
+        superEventDispatcher.subscribe(new Subscription<Engine>(Engine.class) {
+            @Override
+            public void receive(Engine e) {
+                System.out.println("Engine listener triggered. Processing instance of " + e.getClass().getSimpleName());
+            }
+        });
+
+        superEventDispatcher.subscribe(new Subscription<TestEngine>(TestEngine.class) {
+            @Override
+            public void receive(TestEngine e) {
+                System.out.println("TestEngine listener triggered. Processing instance of " + e.getClass().getSimpleName());
+            }
+        });
+
+        superEventDispatcher.dispatch(new TestEngine());
+
+
+
+        if (true) return;
         final TestEngine engine = new TestEngine();
 
         engine.add(new UpdatableEntitySystem());
