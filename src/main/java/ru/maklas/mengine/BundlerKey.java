@@ -2,9 +2,7 @@ package ru.maklas.mengine;
 
 import org.jetbrains.annotations.NotNull;
 
-/**
- * A key that stores Type data of User-Object.
- */
+/** A key that stores Type data of User-Object **/
 public class BundlerKey<T> {
 
     String key;

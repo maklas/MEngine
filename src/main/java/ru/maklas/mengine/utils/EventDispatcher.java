@@ -6,17 +6,17 @@ import ru.maklas.mengine.Subscription;
 
 public class EventDispatcher {
 
+    protected static final int DEFAULT_CAPACITY = 5;
+
     protected final ObjectMap<Class, Signal> map = new ObjectMap<Class, Signal>();
     protected final Array<Object> eventStack = new Array<Object>();
 
-    /**
-     * Subscribes to receive specific Event
-     */
+    /** Subscribes to receive specific Event **/
     @SuppressWarnings("all")
     public <T> void subscribe(Subscription<T> subscription){
         Signal<T> signal = map.get(subscription.clazz);
         if (signal == null){
-            signal = new Signal<T>(5);
+            signal = new Signal<T>(DEFAULT_CAPACITY);
             map.put(subscription.clazz, signal);
         }
         signal.add(subscription);
@@ -30,9 +30,7 @@ public class EventDispatcher {
         }
     }
 
-    /**
-     * Dispatches event. All Subscriptions that subscribed to this event will be notified.
-     */
+    /** Dispatches event. All Subscriptions that subscribed to this event will be notified **/
     @SuppressWarnings("all")
     public void dispatch(Object event){
         Signal signal = map.get(event.getClass());
@@ -59,9 +57,7 @@ public class EventDispatcher {
         return eventStack.first();
     }
 
-    /**
-     * Event that's being fired right now. Might throw Exception if stack's size is 0
-     */
+    /** Event that's being fired right now. Might throw Exception if stack's size is 0 **/
     public Object currentEvent(){
         return eventStack.peek();
     }

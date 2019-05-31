@@ -4,9 +4,7 @@ import com.badlogic.gdx.utils.Consumer;
 import com.badlogic.gdx.utils.Predicate;
 import ru.maklas.mengine.utils.Listener;
 
-/**
- * Handy utils for Engine.
- */
+/** Handy utils for Engine **/
 public class EngineUtils {
 
     public static ComponentChecker makeChecker(Class<? extends Component>... components){
@@ -51,9 +49,7 @@ public class EngineUtils {
        });
     }
 
-    /**
-     * Makes a subscription that will be called only once
-     */
+    /** Makes a subscription that will be called only once **/
     public static <T> Subscription<T> singleCallSubscription(Class<T> eventClass, final Listener<T> listener){
         return new Subscription<T>(eventClass) {
             private boolean called = false;
@@ -67,9 +63,7 @@ public class EngineUtils {
         };
     }
 
-    /**
-     * Makes Subscription that will only be enabled if system is enabled.
-     */
+    /** Makes Subscription that will only be enabled if system is enabled **/
     public static <T> Subscription<T> systemEnabledSubscription(final EntitySystem system, Class<T> eventClass, final Listener<T> listener){
         return new Subscription<T>(eventClass) {
             @Override

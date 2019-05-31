@@ -49,9 +49,7 @@ public class Engine implements Disposable {
     float lastDt;
     private final DisposeOperation disposeOperation = new DisposeOperation();
 
-    /**
-     * Default Engine constructor
-     */
+    /** Default Engine constructor **/
     public Engine() {
         entities = new Array<Entity>(100);
         finder = new DefaultEntityFinder();
@@ -79,9 +77,7 @@ public class Engine implements Disposable {
     //* ADDING + REMOVING *//
     //*********************//
 
-    /**
-     * Adds new Entity to the engine, notifying all EntityListeners
-     */
+    /** Adds new Entity to the engine, notifying all EntityListeners **/
     public Engine add(@NotNull Entity entity){
         if (entity.engine == this){
             return this;
@@ -100,9 +96,7 @@ public class Engine implements Disposable {
         return this;
     }
 
-    /**
-     * @see #add(Entity)
-     */
+    /** @see #add(Entity) **/
     public Engine addAll(Entity[] entities){
         for (Entity entity : entities) {
             add(entity);
@@ -110,9 +104,7 @@ public class Engine implements Disposable {
         return this;
     }
 
-    /**
-     * @see #add(Entity)
-     */
+    /** @see #add(Entity) **/
     public Engine addAll(Array<? extends Entity> entities){
         for (Entity entity : entities) {
             add(entity);
@@ -146,9 +138,7 @@ public class Engine implements Disposable {
         return this;
     }
 
-    /**
-     * Removes Entity from Engine. Notifies listeners.
-     */
+    /** Removes Entity from Engine. Notifies listeners **/
     public boolean remove(@NotNull Entity entity){
         if (entity.engine != this){
             return false;
@@ -186,9 +176,7 @@ public class Engine implements Disposable {
         }
     }
 
-    /**
-     * Adds new Entity system to engine. Will replace EntitySystem of the same class
-     */
+    /** Adds new Entity system to engine. Will replace EntitySystem of the same class **/
     public void add(@NotNull SubscriptionSystem system){
         if (updating){
             afterUpdateQueue.addLast(new AddSystemOperation(system));
@@ -198,9 +186,7 @@ public class Engine implements Disposable {
         system.addToEngine(this);
     }
 
-    /**
-     * Removes specified EntitySystem by class
-     */
+    /** Removes specified EntitySystem by class **/
     public void remove(@NotNull SubscriptionSystem system){
         if (updating){
             afterUpdateQueue.addLast(new RemoveSystemOperation(system));
@@ -216,16 +202,12 @@ public class Engine implements Disposable {
     //* GETTERS *//
     //***********//
 
-    /**
-     * All entities that were added to engine
-     */
+    /** All entities that were added to engine **/
     public ImmutableArray<Entity> getEntities(){
         return immutableEntities;
     }
 
-    /**
-     * GroupManager of this Engine
-     */
+    /** GroupManager of this Engine **/
     public GroupManager getGroupManager() {
         return groupManager;
     }
@@ -234,9 +216,7 @@ public class Engine implements Disposable {
         return systemManager;
     }
 
-    /**
-     * Finds first Entity with the said ID. Not efficient if there are too many Entities.
-     */
+    /** Finds first Entity with the said ID. Not efficient if there are too many Entities **/
     @Nullable
     public Entity findById(int id){
         return finder.find(this, id);
@@ -263,23 +243,17 @@ public class Engine implements Disposable {
         return groupManager.of(componentClass).immutables;
     }
 
-    /**
-     * Event dispatcher for this Engine
-     */
+    /** Event dispatcher for this Engine **/
     public EventDispatcher getDispatcher() {
         return dispatcher;
     }
 
-    /**
-     * Sets EventDispatcher for this Engine
-     */
+    /** Sets EventDispatcher for this Engine **/
     public void setDispatcher(EventDispatcher dispatcher) {
         this.dispatcher = dispatcher;
     }
 
-    /**
-     * Last delta-time passed to Engine via {@link #update(float)}.
-     */
+    /** Last delta-time passed to Engine via {@link #update(float)} **/
     public float getLastDt() {
         return lastDt;
     }
@@ -307,16 +281,12 @@ public class Engine implements Disposable {
         return subscription;
     }
 
-    /**
-     * Unsubscribes for event.
-     */
+    /** Unsubscribes for event **/
     public <T> void unsubscribe(Subscription<T> subscription){
         dispatcher.unsubscribe(subscription);
     }
 
-    /**
-     * Dispatches event in Engine. All Subscriptions that are subscribed to the class of this event will be called
-     */
+    /** Dispatches event in Engine. All Subscriptions that are subscribed to the class of this event will be called **/
     public void dispatch(Object event){
         dispatcher.dispatch(event);
     }
@@ -399,9 +369,7 @@ public class Engine implements Disposable {
     }
 
 
-    /**
-     * Adds {@link EntityListener} that allows to be notified whenever Entity is added or removed from Engine.
-     */
+    /** Adds {@link EntityListener} that allows to be notified whenever Entity is added or removed from Engine **/
     public void addListener(EntityListener listener){
         listeners.add(listener);
     }
@@ -410,9 +378,7 @@ public class Engine implements Disposable {
         return listeners.removeValue(listener, true);
     }
 
-    /**
-     * Calls {@link RenderEntitySystem#invalidate()} on RenderSystems
-     */
+    /** Calls {@link RenderEntitySystem#invalidate()} on RenderSystems **/
     public void invalidateRender(){
         Array<RenderEntitySystem> renderSystems = systemManager.getRenderSystems();
         for (RenderEntitySystem renderSystem : renderSystems) {
@@ -450,9 +416,7 @@ public class Engine implements Disposable {
         processAfterUpdateOperations();
     }
 
-    /**
-     * Calls {@link RenderEntitySystem#render()} on each RenderSystem that is added
-     */
+    /** Calls {@link RenderEntitySystem#render()} on each RenderSystem that is added **/
     public void render() {
         for (RenderEntitySystem rs : systemManager.getRenderSystems()) {
             if (rs.isEnabled()){

@@ -58,24 +58,18 @@ public class SubscriptionSystem {
         return engine;
     }
 
-    /**
-     * @see Engine#entitiesFor(Class)
-     */
+    /** @see Engine#entitiesFor(Class) **/
     protected final ImmutableArray<Entity> entitiesFor(Class<? extends Component> componentClass){
         return engine.entitiesFor(componentClass);
     }
 
-    /**
-     * Throws AssertionError if system is not currently in the same engine.
-     */
+    /** Throws AssertionError if system is not currently in the same engine **/
     protected final void assertSystemAdded(Class <? extends SubscriptionSystem> system){
         if (engine.getSystemManager().getSystem(system) == null)
             throw new AssertionError();
     }
 
-    /**
-     * Throws null pointer exception if system wasn't in engine during this call
-     */
+    /** Throws null pointer exception if system wasn't in engine during this call **/
     protected final void dispatch(Object event){
         engine.dispatch(event);
     }

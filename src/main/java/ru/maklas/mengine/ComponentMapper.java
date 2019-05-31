@@ -2,9 +2,7 @@ package ru.maklas.mengine;
 
 import com.badlogic.gdx.utils.ObjectMap;
 
-/**
- * Maps components of Entities for very fast access
- */
+/** Maps components of Entities for very fast access **/
 public class ComponentMapper<T extends Component> {
 
     private static ObjectMap<Class<? extends Component>, ComponentMapper> assignedComponentTypes = new ObjectMap<Class<? extends Component>, ComponentMapper>();
@@ -18,9 +16,7 @@ public class ComponentMapper<T extends Component> {
         this.id = counter++;
     }
 
-    /**
-     * gets Component mapper for specific component
-     */
+    /** gets Component mapper for specific component **/
     public static <C extends Component> ComponentMapper<C> of(Class<C> cClass){
         ComponentMapper<C> componentMapper = assignedComponentTypes.get(cClass);
         if (componentMapper == null){

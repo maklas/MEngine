@@ -18,17 +18,11 @@ public class Entity {
 
     public static AngleNormalizer angleNormalizer = new AngleNormalizerNONE();
 
-    /**
-     * Id of the entity. Use it as you wish. MEngine's only interaction with it is via {@link Engine#findById(int)}
-     */
+    /** Id of the entity. Use it as you wish. MEngine's only interaction with it is via {@link Engine#findById(int)} **/
     public int id;
-    /**
-     * X position for Entity
-     */
+    /** X position for Entity **/
     public float x;
-    /**
-     * Y position for Entity
-     */
+    /** Y position for Entity **/
     public float y;
     /**
      * Angle of the Entity. Field is private, so use getter and setter.
@@ -83,9 +77,7 @@ public class Entity {
 
     // COMPONENT MANIPULATION
 
-    /**
-     * Never remove from this array
-     */
+    /** Never remove from this array **/
     public final Array<Component> getComponents() {
         return componentArray;
     }
@@ -121,9 +113,7 @@ public class Entity {
         return this;
     }
 
-    /**
-     * Removes Component of specified ComponentMapper from this entity
-     */
+    /** Removes Component of specified ComponentMapper from this entity **/
     public final <T extends Component> T remove(ComponentMapper<T> mapper){
         int mapperId = mapper.id;
         Component component = components[mapperId];
@@ -146,9 +136,7 @@ public class Entity {
         return (T) components[ComponentMapper.of(cClass).id];
     }
 
-    /**
-     * Fastest way to get a component from Entity.
-     */
+    /** Fastest way to get a component from Entity **/
     @SuppressWarnings("all")
     public final <T extends Component> T get(ComponentMapper<T> mapper){
         return (T) components[mapper.id];
@@ -163,16 +151,12 @@ public class Entity {
 
     //GETTERS/SETTERS
 
-    /**
-     * @return angle of this Entity.
-     */
+    /** @return angle of this Entity **/
     public final float getAngle() {
         return angle;
     }
 
-    /**
-     * Sets angle for this Entity
-     */
+    /** Sets angle for this Entity **/
     public final void setAngle(float angle) {
         this.angle = angleNormalizer.normalize(angle);
     }
@@ -230,16 +214,12 @@ public class Entity {
         return subscription;
     }
 
-    /**
-     * Unsubscribes for specific subscription directly from current Engine (make sure Entity is in Engine before calling it).
-     */
+    /** Unsubscribes for specific subscription directly from current Engine (make sure Entity is in Engine before calling it) **/
     protected final void unsubscribe(Subscription subscription){
         engine.unsubscribe(subscription);
     }
 
-    /**
-     * Unsubscribes from all Subscriptions directly from current Engine (make sure Entity is in Engine before calling it).
-     */
+    /** Unsubscribes from all Subscriptions directly from current Engine (make sure Entity is in Engine before calling it) **/
     protected final void unsubscribeAll() {
         if (subscriptions != null){
             for (Subscription subscription : subscriptions) {
@@ -262,33 +242,23 @@ public class Entity {
         removedFromEngine(engine);
     }
 
-    /**
-     * Check if this entity is inside of Engine
-     */
+    /** Check if this entity is inside of Engine **/
     public final boolean isInEngine(){
         return engine != null;
     }
 
-    /**
-     * Triggers when this Entity is added to Engine.
-     */
+    /** Triggers when this Entity is added to Engine **/
     protected void addedToEngine(Engine engine){}
 
-    /**
-     * Gets Engine that this Entity was added into. Might be null if this Entity is not in Engine atm.
-     */
+    /** Gets Engine that this Entity was added into. Might be null if this Entity is not in Engine atm **/
     public final Engine getEngine() {
         return engine;
     }
 
-    /**
-     * Triggers when this Entity is removed from Engine.
-     */
+    /** Triggers when this Entity is removed from Engine **/
     protected void removedFromEngine(Engine engine){}
 
-    /**
-     * Rotates this Entity by specified angle
-     */
+    /** Rotates this Entity by specified angle **/
     public final void rotate(float angle) {
         this.angle = angleNormalizer.normalize(this.angle + angle);
     }
@@ -296,9 +266,7 @@ public class Entity {
 
     //STRINGS
 
-    /**
-     * Basic info about this Entity. Use {@link #toStringWithComponents()} to get full data.
-     */
+    /** Basic info about this Entity. Use {@link #toStringWithComponents()} to get full data **/
     @Override
     public String toString() {
         return "Entity{" +
@@ -313,9 +281,7 @@ public class Entity {
                 '}';
     }
 
-    /**
-     * Full info about this Entity. Don't forget to specify toString() for each component for this method to be of any Use.
-     */
+    /** Full info about this Entity. Don't forget to specify toString() for each component for this method to be of any Use **/
     public final String toStringWithComponents(){
         return "Entity = {" +
                 "id=" + id +

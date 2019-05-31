@@ -6,9 +6,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Comparator;
 
-/**
- * Stores Systems in Engine. Provides methods for their access
- */
+/** Stores Systems in Engine. Provides methods for their access **/
 public class SystemManager {
 
     private static final SystemComparator systemComparator = new SystemComparator();
@@ -63,17 +61,13 @@ public class SystemManager {
         return false;
     }
 
-    /**
-     * Returns system by it's class.
-     */
+    /** Returns system by it's class **/
     @SuppressWarnings("unchecked")
     public <T extends SubscriptionSystem> T getSystem(Class<T> systemType) {
         return (T) systemsByClass.get(systemType);
     }
 
-    /**
-     * Returns first system that have the same class or exrtend it
-     */
+    /** Returns first system that have the same class or exrtend it **/
     @SuppressWarnings("unchecked")
     public <T extends SubscriptionSystem> T getExtendableSystem(Class<T> systemType) {
         for (SubscriptionSystem system : systems) {
@@ -84,9 +78,7 @@ public class SystemManager {
         return null;
     }
 
-    /**
-     * Returns all systems that have the same class or extend it
-     */
+    /** Returns all systems that have the same class or extend it **/
     @SuppressWarnings("unchecked")
     public <T extends SubscriptionSystem> Array<T> getExtendableSystems(Class<T> systemType) {
         Array<T> systems = new Array<T>();
@@ -103,9 +95,7 @@ public class SystemManager {
     }
 
 
-    /**
-     * Do not edit this Array!
-     */
+    /** Do not edit this Array! **/
     public final Array<SubscriptionSystem> getSystems() {
         return systems;
     }
@@ -118,9 +108,7 @@ public class SystemManager {
         return entitySystems;
     }
 
-    /**
-     * @return All Subscription Systems, Entity Systems and Render Systems.
-     */
+    /** @return All Subscription Systems, Entity Systems and Render Systems **/
     public final SubscriptionSystem[] getAll() {
 
         final int size = systems.size + renderSystems.size;

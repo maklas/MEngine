@@ -1,8 +1,6 @@
 package ru.maklas.mengine;
 
-/**
- * Normalizes entity angle from 0 to 360
- */
+/** Normalizes entity angle from 0 to 360 **/
 public class AngleNormalizer360 implements AngleNormalizer {
 
     @Override

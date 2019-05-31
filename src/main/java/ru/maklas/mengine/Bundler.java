@@ -56,17 +56,13 @@ public class Bundler {
         return o;
     }
 
-    /**
-     * Returns integer value. 0 if key wasn't found
-     */
+    /** Returns integer value. 0 if key wasn't found **/
     public int getInt(String key){
         return getInt(key, 0);
     }
 
 
-    /**
-     * Returns integer value. Default value if key wasn't found
-     */
+    /** Returns integer value. Default value if key wasn't found **/
     public int getInt(String key, int def){
         Object o = stringMap.get(key);
         if (!(o instanceof Integer)){
@@ -75,17 +71,13 @@ public class Bundler {
         return (Integer) o;
     }
 
-    /**
-     * Returns boolean value. false if key wasn't found
-     */
+    /** Returns boolean value. false if key wasn't found **/
     public boolean getBool(String key){
         return getBool(key, false);
     }
 
 
-    /**
-     * Returns boolean value. def if key wasn't found
-     */
+    /** Returns boolean value. def if key wasn't found **/
     public boolean getBool(String key, boolean def){
         Object o = stringMap.get(key);
         if (!(o instanceof Boolean)){

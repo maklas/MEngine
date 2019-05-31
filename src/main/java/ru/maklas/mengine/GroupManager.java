@@ -46,9 +46,7 @@ public class GroupManager {
     }
 
 
-    /**
-     * @return a Group of Entities which have specified component in them
-     */
+    /** @return a Group of Entities which have specified component in them **/
     public Group of(ComponentMapper mapper){
         int mapperId = mapper.id;
         Group group = groups[mapperId];
@@ -70,9 +68,7 @@ public class GroupManager {
         return group;
     }
 
-    /**
-     * @return a Group of Entities which have specified component in them
-     */
+    /** @return a Group of Entities which have specified component in them **/
     public Group of(Class<? extends Component> clazz){
         return of(ComponentMapper.of(clazz));
     }

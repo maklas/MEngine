@@ -3,9 +3,7 @@ package ru.maklas.mengine;
 import com.badlogic.gdx.utils.Array;
 import org.jetbrains.annotations.Nullable;
 
-/**
- * Default implementation. Iterates over Entities and compares by Id. Most stable, least efficient.
- */
+/** Default implementation. Iterates over Entities and compares by Id. Most stable, least efficient **/
 public class DefaultEntityFinder implements EntityFinder {
 
     Array.ArrayIterator<Entity> entityIterator;
