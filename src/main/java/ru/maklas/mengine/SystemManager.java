@@ -71,7 +71,8 @@ public class SystemManager {
     @SuppressWarnings("unchecked")
     public <T extends SubscriptionSystem> T getExtendableSystem(Class<T> systemType) {
         for (SubscriptionSystem system : systems) {
-            if (systemType.isAssignableFrom(system.getClass())){
+            Class<? extends SubscriptionSystem> otherType = system.getClass();
+            if (systemType == otherType || systemType.isAssignableFrom(otherType)){
                 return (T) system;
             }
         }
@@ -83,7 +84,8 @@ public class SystemManager {
     public <T extends SubscriptionSystem> Array<T> getExtendableSystems(Class<T> systemType) {
         Array<T> systems = new Array<T>();
         for (SubscriptionSystem system : this.systems) {
-            if (systemType.isAssignableFrom(system.getClass())){
+            Class<? extends SubscriptionSystem> otherType = system.getClass();
+            if (systemType == otherType || systemType.isAssignableFrom(otherType)){
                 systems.add(((T) system));
             }
         }
