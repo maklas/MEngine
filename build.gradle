@@ -4,6 +4,7 @@ version '0.6.0'
 apply plugin: 'eclipse'
 apply plugin: 'idea'
 apply plugin: 'java'
+apply plugin: 'maven-publish'
 
 sourceCompatibility = 1.8
 
@@ -21,15 +22,6 @@ ext {
     jUnitVersion = "4.13.1"
 }
 
-/** needed to disable Java 8 doclint which throws errors **/
-if (JavaVersion.current().isJava8Compatible()) {
-    allprojects {
-        tasks.withType(Javadoc) {
-            options.addStringOption('Xdoclint:none', '-quiet')
-        }
-    }
-}
-
 task sourcesJar(type: Jar, dependsOn: classes) {
     classifier = 'sources'
     from sourceSets.main.allSource
@@ -43,6 +35,18 @@ task javadocJar(type: Jar, dependsOn: javadoc) {
 artifacts {
     archives sourcesJar
     archives javadocJar
+}
+
+publishing {
+    publications {
+        maven(MavenPublication) {
+            groupId = 'ru.maklas.mengine'
+            artifactId = 'mengine'
+            version = '0.6.0'
+
+            from components.java
+        }
+    }
 }
 
 dependencies {
