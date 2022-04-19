@@ -1,8 +1,9 @@
 package ru.maklas.mengine;
 
 import com.badlogic.gdx.utils.Array;
-import com.badlogic.gdx.utils.Consumer;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.function.Consumer;
 
 public class CatchResults<T> extends Array<T> {
 

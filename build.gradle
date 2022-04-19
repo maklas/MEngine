@@ -1,11 +1,11 @@
 group 'ru.maklas.engine'
-version '0.5.1'
+version '0.6.0'
 
 apply plugin: 'eclipse'
 apply plugin: 'idea'
 apply plugin: 'java'
 
-sourceCompatibility = 1.6
+sourceCompatibility = 1.8
 
 repositories {
     mavenLocal()
@@ -17,8 +17,8 @@ repositories {
 
 ext {
     projectGroup = "maklas"
-    gdxVersion = "1.9.8-6"
-    jUnitVersion = "4.12"
+    gdxVersion = "1.10.0-1"
+    jUnitVersion = "4.13.1"
 }
 
 /** needed to disable Java 8 doclint which throws errors **/

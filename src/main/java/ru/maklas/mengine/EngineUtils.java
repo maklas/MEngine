@@ -1,8 +1,9 @@
 package ru.maklas.mengine;
 
-import com.badlogic.gdx.utils.Consumer;
 import com.badlogic.gdx.utils.Predicate;
 import ru.maklas.mengine.utils.Listener;
+
+import java.util.function.Consumer;
 
 /** Handy utils for Engine **/
 public class EngineUtils {
